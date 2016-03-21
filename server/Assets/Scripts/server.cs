@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.VR;
 
 public class server : MonoBehaviour {
     public Texture cursor;
@@ -37,17 +38,16 @@ public class server : MonoBehaviour {
     void onServer() {
         IP = Network.player.ipAddress;
         GUILayout.Box(IP);
+        
+        RectTransform cursor = GameObject.Find("Canvas/cursor").GetComponent<RectTransform>();
         float x = float.Parse(message.Split(',')[0]);
         float y = float.Parse(message.Split(',')[1]);
         if (x != -1 && y != -1) {
             x = (1 - x) * 10 - 5;
             y = y * 10 - 5;
-            //GUI.DrawTexture(new Rect(x, y, cursorSize, cursorSize), cursor);
-            RectTransform cursor = GameObject.Find("Canvas/cursor").GetComponent<RectTransform>();
-            cursor.position = new Vector3(x, y, 10f);
-            GameObject sphere = GameObject.Find("Sphere");
-            sphere.transform.position = new Vector3(x, y, 12f);
         }
+        cursor.localPosition = new Vector3(cursor.localPosition.x, cursor.localPosition.y, 1f);
+        cursor.localRotation = GetComponent<OVRCameraRig>().trackingSpace.localRotation;
     }
 
     [RPC]
