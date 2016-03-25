@@ -38,11 +38,13 @@ public class client : MonoBehaviour {
 
     void onClient() {
         GUILayout.Box(message);
-        if (Input.GetButton("Fire1")) {
+        if (Input.GetButtonUp("Fire1")) {
+            message = "confirm";
+        } else if (Input.GetButton("Fire1")) {
             message = (float)Input.mousePosition.x / Screen.width + ", " + (float)Input.mousePosition.y / Screen.height;
             GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
         } else {
-            message = "-1, -1";
+            message = "untouch";
             GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
         }
     }
