@@ -32,8 +32,8 @@ public class keyboard : MonoBehaviour {
     }
 
     bool cursorInsideKey(RectTransform key) {
-        if (cursor.position.x < key.position.x - key.rect.width * key.localScale.x / 2 || cursor.position.x > key.position.x + key.rect.width * key.localScale.x / 2) return false;
-        if (cursor.position.y < key.position.y - key.rect.height * key.localScale.y / 2 || cursor.position.y > key.position.y + key.rect.height * key.localScale.y / 2) return false;
+        if (cursor.localPosition.x < key.localPosition.x - key.rect.width * key.localScale.x / 2 || cursor.localPosition.x > key.localPosition.x + key.rect.width * key.localScale.x / 2) return false;
+        if (cursor.localPosition.y < key.localPosition.y - key.rect.height * key.localScale.y / 2 || cursor.localPosition.y > key.localPosition.y + key.rect.height * key.localScale.y / 2) return false;
         return true;
     }
 
