@@ -38,11 +38,14 @@ public class keyboard : MonoBehaviour {
     }
 
     public void confirm() {
-        string str = hoverKey.GetComponentInChildren<Text>().text;
-        if (str == "delete") {
-            screen.text = "";
-        } else {
-            screen.text += str;
+        if (hoverKey != null) {
+            string str = hoverKey.GetComponentInChildren<Text>().text;
+            if (str == "delete") {
+                screen.text = "";
+            }
+            else {
+                screen.text += str;
+            }
         }
     }
 }
