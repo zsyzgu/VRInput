@@ -17,8 +17,7 @@ public class trackCanvas : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        RectTransform trackCanvasRect = GetComponent<RectTransform>();
-        trackCanvasRect.sizeDelta = new Vector2(trackCanvasRect.rect.height * Screen.width / Screen.height, trackCanvasRect.rect.height);
+        GetComponent<RectTransform>().sizeDelta = transform.parent.GetComponent<RectTransform>().sizeDelta;
     }
 
     void OnDestroy() {

@@ -4,7 +4,7 @@ using UnityEngine.VR;
 using UnityEngine.UI;
 
 public class server : MonoBehaviour {
-    const bool ENABLE_SERVER_INPUT = true;
+    const bool ON_PC = true;
 
     public GameObject canvasParent;
     public RectTransform canvas;
@@ -51,7 +51,7 @@ public class server : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (ENABLE_SERVER_INPUT) {
+        if (ON_PC) {
             GetComponent<client>().onClient();
         }
 
@@ -69,18 +69,38 @@ public class server : MonoBehaviour {
 
         moveCursor();
         fixCanvasWidth();
+        rotateHead();
+    }
+
+    void rotateHead() {
+        if (ON_PC) {
+            if (Input.GetKey(KeyCode.W)) {
+                canvasParent.transform.Rotate(Time.deltaTime * 10f, 0f, 0f);
+            }
+            if (Input.GetKey(KeyCode.S)) {
+                canvasParent.transform.Rotate(-Time.deltaTime * 10f, 0f, 0f);
+            }
+            if (Input.GetKey(KeyCode.A)) {
+                canvasParent.transform.Rotate(0f, -Time.deltaTime * 10f, 0f);
+            }
+            if (Input.GetKey(KeyCode.D)) {
+                canvasParent.transform.Rotate(0f, Time.deltaTime * 10f, 0f);
+            }
+            if (Input.GetKey(KeyCode.R)) {
+                canvasParent.transform.rotation = new Quaternion();
+            }
+        } else {
+            canvasParent.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
+        }
     }
 
     void fixCanvasWidth() {
         canvas.sizeDelta = new Vector2(canvas.rect.height * Screen.width / Screen.height, canvas.rect.height);
     }
 
-
-
     void moveCursor() {
         cursor.localPosition = new Vector3(0f, 0f, 0f);
 
-        canvasParent.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
         if (message == "confirm") {
             keyboard.GetComponent<keyboard>().confirm();
         }
