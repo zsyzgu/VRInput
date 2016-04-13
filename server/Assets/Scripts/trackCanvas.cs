@@ -73,7 +73,11 @@ public class trackCanvas : MonoBehaviour {
         lastPixelY = pixelY;
     }
 
-    public void stopDrawing() {
-        brushing = false;
+    public bool stopDrawing() {
+        if (brushing) {
+            brushing = false;
+            return true;
+        }
+        return false;
     }
 }

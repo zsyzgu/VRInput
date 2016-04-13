@@ -4,8 +4,9 @@ using UnityEngine.VR;
 using UnityEngine.UI;
 
 public class server : MonoBehaviour {
-    const bool ON_PC = true;
+    const bool ON_PC = false;
 
+    public GameObject trackingSpace;
     public GameObject canvasParent;
     public RectTransform canvas;
     public RectTransform cursor;
@@ -67,44 +68,66 @@ public class server : MonoBehaviour {
                 break;
         }
 
+        rotateHead();
         moveCursor();
         fixCanvasWidth();
-        rotateHead();
+    }
+
+    void headWriting() {
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+        RaycastHit hitInfo;
+        if (Physics.Raycast(ray, out hitInfo)) {
+            Vector2 pos = (Vector2)(canvas.transform.worldToLocalMatrix * hitInfo.point);
+            float x = 1 - (pos.x / canvas.sizeDelta.x + 0.5f);
+            float y = pos.y / canvas.sizeDelta.y + 0.5f;
+            message = x + ", " + y;
+        }
     }
 
     void rotateHead() {
         if (ON_PC) {
+            //trackingSpace.transform.rotation (ON_PC) == InputTracking.GetLocalRotation(VRNode.CenterEye) (!ON_PC)
             if (Input.GetKey(KeyCode.W)) {
-                canvasParent.transform.Rotate(Time.deltaTime * 10f, 0f, 0f);
+                trackingSpace.transform.Rotate(-Time.deltaTime * 50f, 0f, 0f);
             }
             if (Input.GetKey(KeyCode.S)) {
-                canvasParent.transform.Rotate(-Time.deltaTime * 10f, 0f, 0f);
+                trackingSpace.transform.Rotate(+Time.deltaTime * 50f, 0f, 0f);
             }
             if (Input.GetKey(KeyCode.A)) {
-                canvasParent.transform.Rotate(0f, -Time.deltaTime * 10f, 0f);
+                trackingSpace.transform.Rotate(0f, -Time.deltaTime * 50f, 0f);
             }
             if (Input.GetKey(KeyCode.D)) {
-                canvasParent.transform.Rotate(0f, Time.deltaTime * 10f, 0f);
+                trackingSpace.transform.Rotate(0f, +Time.deltaTime * 50f, 0f);
             }
             if (Input.GetKey(KeyCode.R)) {
-                canvasParent.transform.rotation = new Quaternion();
+                trackingSpace.transform.rotation = new Quaternion();
+            }
+
+            if (Input.GetKey(KeyCode.H)) {
+                headWriting();
+            } else {
+                canvasParent.transform.rotation = trackingSpace.transform.rotation;
             }
         } else {
-            canvasParent.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
+            if (Input.GetButton("Fire1")) {
+                headWriting();
+            } else {
+                canvasParent.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
+            }
         }
     }
 
     void fixCanvasWidth() {
         canvas.sizeDelta = new Vector2(canvas.rect.height * Screen.width / Screen.height, canvas.rect.height);
+        canvas.GetComponent<BoxCollider>().size = new Vector3(canvas.sizeDelta.x, canvas.sizeDelta.y, 0.01f);
     }
 
     void moveCursor() {
         cursor.localPosition = new Vector3(0f, 0f, 0f);
 
         if (message == "confirm") {
-            keyboard.GetComponent<keyboard>().confirm();
-        }
-        else if (message != "untouch") {
+            //keyboard.GetComponent<keyboard>().confirm();
+        } else if (message != "untouch") {
             float x = float.Parse(message.Split(',')[0]);
             float y = float.Parse(message.Split(',')[1]);
             //Draw cursor
@@ -115,7 +138,9 @@ public class server : MonoBehaviour {
             //Draw line
             trackCanvas.GetComponent<trackCanvas>().drawLine(x, y);
         } else {
-            trackCanvas.GetComponent<trackCanvas>().stopDrawing();
+            if (trackCanvas.GetComponent<trackCanvas>().stopDrawing()) {
+                keyboard.GetComponent<keyboard>().confirm();
+            }
         }
     }
 }
