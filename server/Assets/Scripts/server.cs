@@ -4,7 +4,7 @@ using UnityEngine.VR;
 using UnityEngine.UI;
 
 public class server : MonoBehaviour {
-    const bool ON_PC = false;
+    const bool ON_PC = true;
 
     public GameObject trackingSpace;
     public GameObject canvasParent;
@@ -123,8 +123,6 @@ public class server : MonoBehaviour {
     }
 
     void moveCursor() {
-        cursor.localPosition = new Vector3(0f, 0f, 0f);
-
         if (message == "confirm") {
             //keyboard.GetComponent<keyboard>().confirm();
         } else if (message != "untouch") {
@@ -141,6 +139,7 @@ public class server : MonoBehaviour {
             if (trackCanvas.GetComponent<trackCanvas>().stopDrawing()) {
                 keyboard.GetComponent<keyboard>().confirm();
             }
+            cursor.localPosition = new Vector3(0f, 0f, 0f);
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class keyboard : MonoBehaviour {
     public RectTransform cursor;
     public Text screen;
-    private RectTransform hoverKey;
+    private RectTransform hoverKey = null;
 
 	// Use this for initialization
 	void Start () {
@@ -38,6 +38,7 @@ public class keyboard : MonoBehaviour {
     }
 
     public void confirm() {
+        Debug.Log(hoverKey);
         if (hoverKey != null) {
             string str = hoverKey.GetComponentInChildren<Text>().text;
             if (str == "delete") {
@@ -45,6 +46,7 @@ public class keyboard : MonoBehaviour {
             }
             else {
                 screen.text += str;
+                Debug.Log(screen.text);
             }
         }
     }
