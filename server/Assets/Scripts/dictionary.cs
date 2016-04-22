@@ -27,17 +27,13 @@ public class dictionary : MonoBehaviour {
     }
 
 	void Start () {
-        string path = "";
-        if (Application.platform == RuntimePlatform.Android) {
-            path = Application.persistentDataPath;
-        } else if (Application.platform == RuntimePlatform.WindowsEditor) {
-            path = Application.dataPath;
-        }
+        string[] lines = {};
+        
+        TextAsset textAsset = Resources.Load("lexicon") as TextAsset;
+        lines = textAsset.text.Split('\n');
 
-        StreamReader sr = File.OpenText(path + "//" + "lexicon.txt");
-        string line;
         int cnt = 0;
-        while ((line = sr.ReadLine()) != null) {
+        foreach (string line in lines) {
             Word word = new Word();
             word.word = line.Split(' ')[0];
             word.pri = float.Parse(line.Split(' ')[1]);
@@ -46,9 +42,6 @@ public class dictionary : MonoBehaviour {
                 break;
             }
         }
-
-        sr.Close();
-        sr.Dispose();
 	}
     
 	void Update () {

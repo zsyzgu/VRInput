@@ -106,16 +106,24 @@ public class server : MonoBehaviour {
                 trackingSpace.transform.rotation = new Quaternion();
             }
 
-            if (Input.GetKey(KeyCode.H)) {
-                headWriting();
-            } else {
+            if (Network.connections.Length > 0) {
                 canvasParent.transform.rotation = trackingSpace.transform.rotation;
+            } else {
+                if (Input.GetKey(KeyCode.H)) {
+                    headWriting();
+                } else {
+                    //message = "untouch";
+                }
             }
         } else {
-            if (Input.GetButton("Fire1")) {
-                headWriting();
-            } else {
+            if (Network.connections.Length > 0) {
                 canvasParent.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
+            } else {
+                if (Input.GetButton("Fire1")) {
+                    headWriting();
+                } else {
+                    message = "untouch";
+                }
             }
         }
     }
