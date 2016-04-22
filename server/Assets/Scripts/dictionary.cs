@@ -4,7 +4,7 @@ using System.Collections;
 
 public class dictionary : MonoBehaviour {
     // script on keyboard
-    public const int MAX_WORD = 5000;
+    public const int MAX_WORD = 1000;
     public const int SAMPLE = 100;
 
     public class Word {
@@ -79,13 +79,17 @@ public class dictionary : MonoBehaviour {
             wordList.Add(word);
         }
 
-        posList.Clear();
+        clearPos();
         wordList.Sort(new WordComparer());
         return wordList;
     }
 
     public void addPos(Vector2 pos) {
         posList.Add(pos);
+    }
+
+    public void clearPos() {
+        posList.Clear();
     }
 
     private float calnPri(ArrayList A, ArrayList B) {

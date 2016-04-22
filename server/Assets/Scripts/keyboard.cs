@@ -42,6 +42,7 @@ public class keyboard : MonoBehaviour {
             string str = hoverKey.GetComponentInChildren<Text>().text;
             if (str == "delete") {
                 screen.text = "";
+                GetComponent<dictionary>().clearPos();
                 return;
             }
         }
