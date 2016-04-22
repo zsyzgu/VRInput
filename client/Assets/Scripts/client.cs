@@ -28,9 +28,7 @@ public class client : MonoBehaviour {
     }
 
     public void onClient() {
-        if (Input.GetButtonUp("Fire1")) {
-            message = "confirm";
-        } else if (Input.GetButton("Fire1")) {
+        if (Input.GetButton("Fire1")) {
             message = (float)Input.mousePosition.x / Screen.width + ", " + (float)Input.mousePosition.y / Screen.height;
         } else {
             message = "untouch";

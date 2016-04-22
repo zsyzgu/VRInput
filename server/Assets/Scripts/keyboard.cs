@@ -38,16 +38,17 @@ public class keyboard : MonoBehaviour {
     }
 
     public void confirm() {
-        Debug.Log(hoverKey);
         if (hoverKey != null) {
             string str = hoverKey.GetComponentInChildren<Text>().text;
             if (str == "delete") {
                 screen.text = "";
+                return;
             }
-            else {
-                screen.text += str;
-                Debug.Log(screen.text);
-            }
+        }
+
+        ArrayList wordList = GetComponent<dictionary>().getWordList();
+        if (wordList.Count > 0) {
+            screen.text += ((dictionary.Word)wordList[0]).word + " ";
         }
     }
 }

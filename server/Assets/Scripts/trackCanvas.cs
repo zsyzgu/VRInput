@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class trackCanvas : MonoBehaviour {
+    //script on TrackCanvs
     Texture2D texture;
 
     int brushRadius = 1;
@@ -47,7 +48,7 @@ public class trackCanvas : MonoBehaviour {
     }
 
     public void drawLine(float x, float y) {
-        int pixelX = (int)(texture.width * (1 - x));
+        int pixelX = (int)(texture.width * x);
         int pixelY = (int)(texture.height * y);
 
         //Check if clear the trackCanvas

@@ -4,8 +4,6 @@ using UnityEngine.VR;
 using UnityEngine.UI;
 
 public class server : MonoBehaviour {
-    const bool ON_PC = true;
-
     public GameObject trackingSpace;
     public GameObject canvasParent;
     public RectTransform canvas;
@@ -16,7 +14,7 @@ public class server : MonoBehaviour {
     int cursorSize = 40;
     string IP = "";
     int port = 1234;
-    string message = "-1, -1";
+    string message = "untouch";
 
     void OnGUI() {
         if (Network.peerType == NetworkPeerType.Server) {
@@ -52,8 +50,13 @@ public class server : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (ON_PC) {
+        if (Application.platform == RuntimePlatform.WindowsEditor) {
             GetComponent<client>().onClient();
+            if (message != "untouch") {
+                float x = float.Parse(message.Split(',')[0]);
+                float y = float.Parse(message.Split(',')[1]);
+                message = (1 - x) + ", " + y;
+            }
         }
 
         switch (Network.peerType) {
@@ -85,7 +88,7 @@ public class server : MonoBehaviour {
     }
 
     void rotateHead() {
-        if (ON_PC) {
+        if (Application.platform == RuntimePlatform.WindowsEditor) {
             //trackingSpace.transform.rotation (ON_PC) == InputTracking.GetLocalRotation(VRNode.CenterEye) (!ON_PC)
             if (Input.GetKey(KeyCode.W)) {
                 trackingSpace.transform.Rotate(-Time.deltaTime * 50f, 0f, 0f);
@@ -123,9 +126,7 @@ public class server : MonoBehaviour {
     }
 
     void moveCursor() {
-        if (message == "confirm") {
-            //keyboard.GetComponent<keyboard>().confirm();
-        } else if (message != "untouch") {
+        if (message != "untouch") {
             float x = float.Parse(message.Split(',')[0]);
             float y = float.Parse(message.Split(',')[1]);
             //Draw cursor
@@ -134,7 +135,10 @@ public class server : MonoBehaviour {
             cursor.localPosition = new Vector3(cursorX, cursorY, 0f);
 
             //Draw line
-            trackCanvas.GetComponent<trackCanvas>().drawLine(x, y);
+            trackCanvas.GetComponent<trackCanvas>().drawLine(1 - x, y);
+
+            //Record gesture input
+            keyboard.GetComponent<dictionary>().addPos(new Vector2(1 - x, y));
         } else {
             if (trackCanvas.GetComponent<trackCanvas>().stopDrawing()) {
                 keyboard.GetComponent<keyboard>().confirm();
