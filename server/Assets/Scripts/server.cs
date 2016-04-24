@@ -10,81 +10,32 @@ public class server : MonoBehaviour {
     public RectTransform cursor;
     public GameObject keyboard;
     public GameObject trackCanvas;
-    
-    int cursorSize = 40;
-    string IP = "";
-    int port = 1234;
-    string message = "untouch";
 
     void OnGUI() {
-        if (Network.peerType == NetworkPeerType.Server) {
-            onServer();
-        }
-    }
-
-    void startServer() {
-        NetworkConnectionError error = Network.InitializeServer(12, port, false);
-        switch (error) {
-            case NetworkConnectionError.NoError:
-                break;
-            default:
-                Debug.Log("Error:" + error);
-                break;
-        }
-    }
-    
-    void onServer() {
-        IP = Network.player.ipAddress;
-        GUILayout.Box(IP);
-    }
-
-    [RPC]
-    void reciveMessage(string msg, NetworkMessageInfo info) {
-        message = msg;
-    }
-
-	// Use this for initialization
-	void Start () {
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (Application.platform == RuntimePlatform.WindowsEditor) {
-            GetComponent<client>().onClient();
-            if (message != "untouch") {
-                float x = float.Parse(message.Split(',')[0]);
-                float y = float.Parse(message.Split(',')[1]);
-                message = (1 - x) + ", " + y;
-            }
-        }
 
-        switch (Network.peerType) {
-            case NetworkPeerType.Disconnected:
-                startServer();
-                break;
-            case NetworkPeerType.Client:
-                break;
-            case NetworkPeerType.Connecting:
-                break;
-            default:
-                break;
-        }
+    // Use this for initialization
+    void Start() {
 
-        rotateHead();
-        moveCursor();
+    }
+
+    // Update is called once per frame
+    void Update() {
         fixCanvasWidth();
+        rotateHead();
     }
 
-    void headWriting() {
+    Vector2 aimPos() {
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo)) {
             Vector2 pos = (Vector2)(canvas.transform.worldToLocalMatrix * hitInfo.point);
-            float x = 1 - (pos.x / canvas.sizeDelta.x + 0.5f);
-            float y = pos.y / canvas.sizeDelta.y + 0.5f;
-            message = x + ", " + y;
+            float x = 1 - (pos.x / canvas.rect.width + 0.5f);
+            float y = pos.y / canvas.rect.height + 0.5f;
+            return new Vector2(x, y); ;
         }
+        return new Vector2(-1, -1);
     }
 
     void rotateHead() {
@@ -108,23 +59,36 @@ public class server : MonoBehaviour {
 
             if (Network.connections.Length > 0) {
                 canvasParent.transform.rotation = trackingSpace.transform.rotation;
-            } else {
+            }
+            else {
                 if (Input.GetKey(KeyCode.H)) {
-                    headWriting();
-                } else {
-                    //message = "untouch";
+                    headWriting(aimPos());
+                }
+                else {
+                    moveCursor(aimPos());
+                    confirm();
                 }
             }
-        } else {
+        }
+        else {
             if (Network.connections.Length > 0) {
                 canvasParent.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
-            } else {
+            }
+            else {
                 if (Input.GetButton("Fire1")) {
-                    headWriting();
-                } else {
-                    message = "untouch";
+                    headWriting(aimPos());
+                }
+                else {
+                    moveCursor(aimPos());
+                    confirm();
                 }
             }
+        }
+    }
+
+    void confirm() {
+        if (trackCanvas.GetComponent<trackCanvas>().stopDrawing()) {
+            keyboard.GetComponent<keyboard>().confirm();
         }
     }
 
@@ -133,25 +97,23 @@ public class server : MonoBehaviour {
         canvas.GetComponent<BoxCollider>().size = new Vector3(canvas.sizeDelta.x, canvas.sizeDelta.y, 0.01f);
     }
 
-    void moveCursor() {
-        if (message != "untouch") {
-            float x = float.Parse(message.Split(',')[0]);
-            float y = float.Parse(message.Split(',')[1]);
-            //Draw cursor
-            float cursorX = (0.5f - x) * canvas.rect.width;
-            float cursorY = (y - 0.5f) * canvas.rect.height;
-            cursor.localPosition = new Vector3(cursorX, cursorY, 0f);
-
-            //Draw line
-            trackCanvas.GetComponent<trackCanvas>().drawLine(1 - x, y);
-
-            //Record gesture input
-            keyboard.GetComponent<dictionary>().addPos(new Vector2(1 - x, y));
-        } else {
-            if (trackCanvas.GetComponent<trackCanvas>().stopDrawing()) {
-                keyboard.GetComponent<keyboard>().confirm();
-            }
-            cursor.localPosition = new Vector3(0f, 0f, 0f);
+    void headWriting(Vector2 pos) {
+        if (pos.x < 0) {
+            return;
         }
+
+        moveCursor(pos);
+
+        //Draw line
+        trackCanvas.GetComponent<trackCanvas>().drawLine(1 - pos.x, pos.y);
+
+        //Record gesture input
+        keyboard.GetComponent<dictionary>().addPos(new Vector2(1 - pos.x, pos.y));
+    }
+
+    void moveCursor(Vector2 pos) {
+        float cursorX = (0.5f - pos.x) * canvas.rect.width;
+        float cursorY = (pos.y - 0.5f) * canvas.rect.height;
+        cursor.localPosition = new Vector3(cursorX, cursorY, 0f);
     }
 }

@@ -4,8 +4,8 @@ using System.Collections;
 
 public class dictionary : MonoBehaviour {
     // script on keyboard
-    public const int MAX_WORD = 1000;
-    public const int SAMPLE = 100;
+    public const int MAX_WORD = 5000;
+    public const int SAMPLE = 50, POSLIST_SAMPLE = 100;
 
     public class Word {
         public float pri;
@@ -55,14 +55,22 @@ public class dictionary : MonoBehaviour {
 
         ArrayList wordList = new ArrayList();
 
+        if (posList.Count > POSLIST_SAMPLE) {
+            ArrayList samplePosList = new ArrayList();
+            for (int i = 0; i < POSLIST_SAMPLE; i++) {
+                samplePosList.Add(posList[(i + 1) * posList.Count / POSLIST_SAMPLE - 1]);
+            }
+            posList = samplePosList;
+        }
+
         for (int i = 0; i < lexicon.Count; i++) {
             ArrayList wordPosList = new ArrayList();
             string str = ((Word)lexicon[i]).word;
             for (int j = 0; j < str.Length; j++) {
                 RectTransform key = transform.FindChild("key" + (char)(str[j] - 'a' + 'A')).GetComponent<RectTransform>();
                 RectTransform canvas = transform.parent.GetComponent<RectTransform>();
-                float x = key.position.x / canvas.rect.width + 0.5f;
-                float y = key.position.y / canvas.rect.height + 0.5f;
+                float x = (key.position.x / canvas.rect.width + 0.5f) * canvas.rect.width;
+                float y = (key.position.y / canvas.rect.height + 0.5f) * canvas.rect.height;
                 wordPosList.Add(new Vector2(x, y));
             }
 
@@ -71,13 +79,15 @@ public class dictionary : MonoBehaviour {
             word.pri = calnPri(posList, wordPosList);
             wordList.Add(word);
         }
-
-        clearPos();
+        
         wordList.Sort(new WordComparer());
         return wordList;
     }
 
     public void addPos(Vector2 pos) {
+        RectTransform canvas = transform.parent.GetComponent<RectTransform>();
+        pos.x *= canvas.rect.width;
+        pos.y *= canvas.rect.height;
         posList.Add(pos);
     }
 
@@ -92,13 +102,13 @@ public class dictionary : MonoBehaviour {
         for (int i = 0; i + 1 < A.Count; i++) {
             lenA += Vector2.Distance((Vector2)A[i], (Vector2)A[i + 1]);
         }
-        lenA /= SAMPLE;
+        lenA /= (SAMPLE - 1);
 
         float lenB = 0;
         for (int i = 0; i + 1 < B.Count; i++) {
             lenB += Vector2.Distance((Vector2)B[i], (Vector2)B[i + 1]);
         }
-        lenB /= SAMPLE;
+        lenB /= (SAMPLE - 1);
 
         int u = 0, v = 0;
         float leftA = 0, leftB = 0;
@@ -118,7 +128,8 @@ public class dictionary : MonoBehaviour {
             if (v + 1 < B.Count) {
                 posB += ((Vector2)B[v + 1] - (Vector2)B[v]) * (leftB / Vector2.Distance((Vector2)B[v], (Vector2)B[v + 1]));
             }
-            ret += Vector2.Distance(posA, posB);
+            float dist = Vector2.Distance(posA, posB);
+            ret += dist;
             leftA += lenA;
             leftB += lenB;
         }
