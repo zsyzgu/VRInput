@@ -5,7 +5,7 @@ using System.Collections;
 public class dictionary : MonoBehaviour {
     // script on keyboard
     public const int MAX_WORD = 5000;
-    public const int SAMPLE = 50, POSLIST_SAMPLE = 100;
+    public const int SAMPLE = 30, POSLIST_SAMPLE = 50;
 
     public class Word {
         public float pri;
@@ -69,8 +69,8 @@ public class dictionary : MonoBehaviour {
             for (int j = 0; j < str.Length; j++) {
                 RectTransform key = transform.FindChild("key" + (char)(str[j] - 'a' + 'A')).GetComponent<RectTransform>();
                 RectTransform canvas = transform.parent.GetComponent<RectTransform>();
-                float x = (key.position.x / canvas.rect.width + 0.5f) * canvas.rect.width;
-                float y = (key.position.y / canvas.rect.height + 0.5f) * canvas.rect.height;
+                float x = key.localPosition.x / canvas.rect.width + 0.5f;
+                float y = key.localPosition.y / canvas.rect.height + 0.5f;
                 wordPosList.Add(new Vector2(x, y));
             }
 
@@ -86,8 +86,6 @@ public class dictionary : MonoBehaviour {
 
     public void addPos(Vector2 pos) {
         RectTransform canvas = transform.parent.GetComponent<RectTransform>();
-        pos.x *= canvas.rect.width;
-        pos.y *= canvas.rect.height;
         posList.Add(pos);
     }
 

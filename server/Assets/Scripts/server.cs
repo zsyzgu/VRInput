@@ -22,7 +22,7 @@ public class server : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        fixCanvasWidth();
+        //fixCanvasWidth();
         rotateHead();
     }
 
@@ -33,7 +33,8 @@ public class server : MonoBehaviour {
             Vector2 pos = (Vector2)(canvas.transform.worldToLocalMatrix * hitInfo.point);
             float x = 1 - (pos.x / canvas.rect.width + 0.5f);
             float y = pos.y / canvas.rect.height + 0.5f;
-            return new Vector2(x, y); ;
+            Vector2 ret = new Vector2(x, y);
+            return ret;
         }
         return new Vector2(-1, -1);
     }
