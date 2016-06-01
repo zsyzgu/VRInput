@@ -95,7 +95,7 @@ public class Server : MonoBehaviour {
         tracking.GetComponent<Tracking>().drawLine(pos.x, pos.y);
 
         //Record gesture input
-        keyboard.GetComponent<dictionary>().addPos(new Vector2(pos.x, pos.y));
+        keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
     }
 
     void moveCursor() {
