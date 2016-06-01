@@ -4,14 +4,17 @@ using UnityEngine.UI;
 
 public class Keyboard : MonoBehaviour {
     public RectTransform cursor;
-    public Text screen;
+    public GameObject outputScreen;
+
+    private Output output;
     private RectTransform hoverKey = null;
-    private ArrayList wordList;
+    private ArrayList wordList = new ArrayList();
     private int selectNum = 0;
     private int page = 0;
 
     // Use this for initialization
     void Start () {
+        output = outputScreen.GetComponent<Output>();
         calnSelectNum();
     }
 	
@@ -73,25 +76,17 @@ public class Keyboard : MonoBehaviour {
         return true;
     }
 
-    string deleteWord(string text) {
-        for (int i = text.Length - 2; i >= 0; i--) {
-            if (text[i] == ' ') {
-                return text.Substring(0, i + 1);
-            }
-        }
-        return "";
-    }
-
     public void confirm() {
         if (hoverKey != null && hoverKey.tag == "delete") {
-            screen.text = deleteWord(screen.text);
+            output.deleteWord();
             page = 0;
             GetComponent<Dictionary>().clearPos();
             return;
         }
 
         if (hoverKey != null && hoverKey.tag == "select") {
-            screen.text = deleteWord(screen.text) + hoverKey.GetComponentInChildren<Text>().text;
+            output.deleteWord();
+            output.addWord(hoverKey.GetComponentInChildren<Text>().text);
             page = 0;
             GetComponent<Dictionary>().clearPos();
             clearSelect();
@@ -121,7 +116,7 @@ public class Keyboard : MonoBehaviour {
             if (key.tag == "select") {
                 int rank = page * selectNum + (key.name[6] - '0');
                 if (rank < wordList.Count) {
-                    key.GetComponentInChildren<Text>().text = ((Dictionary.Word)wordList[rank]).word + " ";
+                    key.GetComponentInChildren<Text>().text = ((Dictionary.Word)wordList[rank]).word;
                 } else {
                     key.GetComponentInChildren<Text>().text = "";
                 }
@@ -139,7 +134,7 @@ public class Keyboard : MonoBehaviour {
 
     void drawDefaultWord() {
         if (wordList.Count > 0) {
-            screen.text += ((Dictionary.Word)wordList[0]).word + " ";
+            output.addWord(((Dictionary.Word)wordList[0]).word);
             page = 0;
         }
     }

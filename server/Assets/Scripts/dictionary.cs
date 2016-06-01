@@ -84,6 +84,15 @@ public class Dictionary : MonoBehaviour {
         return wordList;
     }
 
+    public bool existWord(string word) {
+        for (int i = 0; i < lexicon.Count; i++) {
+            if (word == ((Word)lexicon[i]).word) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addPos(Vector2 pos) {
         RectTransform canvas = transform.parent.GetComponent<RectTransform>();
         posList.Add(pos);
