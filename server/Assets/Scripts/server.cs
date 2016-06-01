@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 public class Server : MonoBehaviour {
     public GameObject trackingSpace;
-    public GameObject cameraCoordinate;
     public RectTransform canvas;
     public RectTransform cursor;
     public GameObject keyboard;
     public GameObject tracking;
+
+    private bool mouseHidden = true;
+    private float rotationY = 0f;
 
     void OnGUI() {
 
@@ -25,21 +27,19 @@ public class Server : MonoBehaviour {
         rotateHead();
     }
 
-   Vector2 aimPos() {
+   bool aimPos(out Vector2 ret) {
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo)) {
             Vector2 pos = (Vector2)(canvas.transform.worldToLocalMatrix * hitInfo.point);
             float x = pos.x / canvas.rect.width + 0.5f;
             float y = pos.y / canvas.rect.height + 0.5f;
-            Vector2 ret = new Vector2(x, y);
-            return ret;
+            ret = new Vector2(x, y);
+            return true;
         }
-        return new Vector2(-1, -1);
+        ret = new Vector2();
+        return false;
     }
-
-    private bool mouseHidden = false;
-    private float rotationY = 0F;
 
     void rotateHead() {
         if (Application.platform == RuntimePlatform.WindowsEditor) {
@@ -83,23 +83,26 @@ public class Server : MonoBehaviour {
     }
 
     void headWriting() {
-        Vector2 pos = aimPos();
-
-        if (pos.x < 0) {
+        Vector2 pos;
+        if (aimPos(out pos) == false) {
             return;
         }
 
         moveCursor();
 
         //Draw line
-        tracking.GetComponent<Tracking>().drawLine(pos.x, pos.y);
+        tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
 
         //Record gesture input
         keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
     }
 
     void moveCursor() {
-    Vector2 pos = aimPos();
+        Vector2 pos;
+        if (aimPos(out pos) == false) {
+            return;
+        }
+
         float cursorX = (pos.x - 0.5f) * canvas.rect.width;
         float cursorY = (pos.y - 0.5f) * canvas.rect.height;
         cursor.localPosition = new Vector3(cursorX, cursorY, 0f);
