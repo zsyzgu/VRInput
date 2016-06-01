@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Server : MonoBehaviour {
+    public Canvas canvas;
     private int port = 1234;
 
     void Start() {
@@ -27,6 +28,12 @@ public class Server : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Alpha2)) {
             sendMessage("2");
         }
+        if (Input.GetKeyUp(KeyCode.Alpha3)) {
+            sendMessage("3");
+        }
+        if (Input.GetKeyUp(KeyCode.Alpha4)) {
+            sendMessage("4");
+        }
     }
 
     void startServer() {
@@ -45,7 +52,20 @@ public class Server : MonoBehaviour {
     }
 
     void recvMessage(string message) {
-        Debug.Log(message);
+        if (message == "1") {
+
+        }
+        if (message == "2") {
+           
+        }
+        if (message == "3") {
+            RectTransform rect = canvas.GetComponent<RectTransform>();
+            rect.localScale = new Vector3(rect.localScale.x + 0.1f, rect.localScale.y + 0.1f, rect.localScale.z);
+        }
+        if (message == "4") {
+            RectTransform rect = canvas.GetComponent<RectTransform>();
+            rect.localScale = new Vector3(rect.localScale.x - 0.1f, rect.localScale.y - 0.1f, rect.localScale.z);
+        }
     }
 
     [RPC]
@@ -58,5 +78,7 @@ public class Server : MonoBehaviour {
         if (sender != Network.player) {
             recvMessage(message);
         }
+
+        recvMessage(message);
     }
 }

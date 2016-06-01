@@ -60,11 +60,11 @@ public class Client : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Alpha2)) {
             sendMessage("2");
         }
-        if (Input.GetKeyUp(KeyCode.Plus)) {
-            sendMessage("+");
+        if (Input.GetKeyUp(KeyCode.Alpha3)) {
+            sendMessage("3");
         }
-        if (Input.GetKeyUp(KeyCode.Minus)) {
-            sendMessage("-");
+        if (Input.GetKeyUp(KeyCode.Alpha4)) {
+            sendMessage("4");
         }
     }
 
