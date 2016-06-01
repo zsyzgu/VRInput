@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public class Client : MonoBehaviour {
-    string IP = "";
-    int port = 1234;
+    private string IP = "";
+    private int port = 1234;
+    private StreamWriter sw;
 
     void Start() {
-
+        sw = File.CreateText("log.txt");
     }
 
     void Update() {
@@ -21,6 +23,13 @@ public class Client : MonoBehaviour {
             default:
                 break;
         }
+
+        sw.Flush();
+    }
+
+    void OnDestroy() {
+        sw.Flush();
+        sw.Close();
     }
 
     void OnGUI() {
@@ -51,6 +60,12 @@ public class Client : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Alpha2)) {
             sendMessage("2");
         }
+        if (Input.GetKeyUp(KeyCode.Plus)) {
+            sendMessage("+");
+        }
+        if (Input.GetKeyUp(KeyCode.Minus)) {
+            sendMessage("-");
+        }
     }
 
     void sendMessage(string message) {
@@ -58,7 +73,7 @@ public class Client : MonoBehaviour {
     }
 
     void recvMessage(string message) {
-        Debug.Log(message);
+        sw.WriteLine(message);
     }
 
     [RPC]
