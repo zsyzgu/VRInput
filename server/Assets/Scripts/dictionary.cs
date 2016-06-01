@@ -5,7 +5,7 @@ using System.Collections;
 public class Dictionary : MonoBehaviour {
     // script on keyboard
     public const int MAX_WORD = 5000;
-    public const int METRIC_SAMPLE = 30, POSLIST_SAMPLE = 50;
+    public const int METRIC_SAMPLE = 20, POSLIST_SAMPLE = 50;
 
     public class Word {
         public float pri;

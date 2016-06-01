@@ -3,8 +3,6 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class Tracking : MonoBehaviour {
-    Texture2D texture;
-
     int brushRadius = 1;
     bool isDrawing = false;
     int lastPixelX = -1;
@@ -14,16 +12,14 @@ public class Tracking : MonoBehaviour {
     private int rendererCnt = 0;
     
     void Start () {
+        RectTransform rect = GetComponentInParent<RectTransform>();
         lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.SetColors(Color.yellow, Color.red);
-        lineRenderer.SetWidth(0.1f, 0.1f);
+        lineRenderer.SetWidth(0.1f * rect.localScale.x, 0.1f * rect.localScale.y);
         lineRenderer.SetVertexCount(rendererCnt);
-
-        texture = (Texture2D)GetComponent<RawImage>().texture;
     }
 	
 	void Update () {
-        GetComponent<RectTransform>().sizeDelta = transform.parent.GetComponent<RectTransform>().sizeDelta;
+
     }
 
     void OnDestroy() {
@@ -40,9 +36,12 @@ public class Tracking : MonoBehaviour {
             clearCanvas();
         }
 
+        RectTransform rect = GetComponentInParent<RectTransform>();
+        float width = rect.rect.width * rect.localScale.x;
+        float height = rect.rect.height * rect.localScale.y;
         isDrawing = true;
         lineRenderer.SetVertexCount(++rendererCnt);
-        lineRenderer.SetPosition(rendererCnt - 1, new Vector3(x * 5f - 2.5f, y * 5f - 2.5f, 5f));
+        lineRenderer.SetPosition(rendererCnt - 1, new Vector3((x - 0.5f) * width, (y - 0.5f) * height, rect.transform.position.z - 0.01f));
     }
 
     public bool stopDrawing() {

@@ -4,6 +4,8 @@ using UnityEngine.VR;
 using UnityEngine.UI;
 
 public class Server : MonoBehaviour {
+    const int FRAME_PER_SAMPLE = 5;
+
     public GameObject trackingSpace;
     public RectTransform canvas;
     public RectTransform cursor;
@@ -12,6 +14,7 @@ public class Server : MonoBehaviour {
 
     private bool mouseHidden = true;
     private float rotationY = 0f;
+    private int frameCnt = 0;
 
     void OnGUI() {
 
@@ -81,7 +84,7 @@ public class Server : MonoBehaviour {
             keyboard.GetComponent<Keyboard>().confirm();
         }
     }
-
+    
     void headWriting() {
         Vector2 pos;
         if (aimPos(out pos) == false) {
@@ -90,11 +93,15 @@ public class Server : MonoBehaviour {
 
         moveCursor();
 
-        //Draw line
-        tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
+        if (frameCnt-- == 0) {
+            frameCnt = FRAME_PER_SAMPLE;
 
-        //Record gesture input
-        keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
+            //Draw line
+            tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
+            //Record gesture input
+            keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
+
+        }
     }
 
     void moveCursor() {
