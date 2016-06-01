@@ -2,11 +2,12 @@
 using System.Collections;
 
 public class Server : MonoBehaviour {
+    static private Server server;
     public Canvas canvas;
     private int port = 1234;
 
     void Start() {
-
+        server = this;
     }
 
     void Update() {
@@ -45,6 +46,10 @@ public class Server : MonoBehaviour {
                 Debug.Log("Connect Error: " + error);
                 break;
         }
+    }
+
+    static public void log(string message) {
+        server.sendMessage(Time.time + " " + message);
     }
 
     void sendMessage(string message) {

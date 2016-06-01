@@ -12,14 +12,13 @@ public class Tracking : MonoBehaviour {
     private int rendererCnt = 0;
     
     void Start () {
-        RectTransform rect = GetComponentInParent<RectTransform>();
         lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.SetWidth(0.1f * rect.localScale.x, 0.1f * rect.localScale.y);
         lineRenderer.SetVertexCount(rendererCnt);
     }
 	
 	void Update () {
-
+        RectTransform rect = GetComponentInParent<RectTransform>();
+        lineRenderer.SetWidth(0.1f * rect.localScale.x, 0.1f * rect.localScale.y);
     }
 
     void OnDestroy() {

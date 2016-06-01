@@ -78,6 +78,7 @@ public class Keyboard : MonoBehaviour {
 
     public void confirm() {
         if (hoverKey != null && hoverKey.tag == "delete") {
+            Server.log("delete");
             output.deleteWord();
             page = 0;
             GetComponent<Dictionary>().clearPos();
@@ -85,6 +86,7 @@ public class Keyboard : MonoBehaviour {
         }
 
         if (hoverKey != null && hoverKey.tag == "select") {
+            Server.log("select");
             output.deleteWord();
             output.addWord(hoverKey.GetComponentInChildren<Text>().text);
             page = 0;
@@ -95,15 +97,18 @@ public class Keyboard : MonoBehaviour {
         
         if (hoverKey != null && hoverKey.tag == "page") {
             if (hoverKey.name == "lastPage" && canLastPage()) {
+                Server.log("lastPage");
                 page--;
             }
             if (hoverKey.name == "nextPage" && canNextPage()) {
+                Server.log("nextPage");
                 page++;
             }
             drawSelect();
             return;
         }
 
+        Server.log("endGesture");
         wordList = GetComponent<Dictionary>().getWordList();
         GetComponent<Dictionary>().clearPos();
 

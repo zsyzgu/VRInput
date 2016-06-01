@@ -94,7 +94,7 @@ public class Dictionary : MonoBehaviour {
     }
 
     public void addPos(Vector2 pos) {
-        RectTransform canvas = transform.parent.GetComponent<RectTransform>();
+        Server.log("pos " + pos.x + " " + pos.y);
         posList.Add(pos);
     }
 
