@@ -1,10 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class client : MonoBehaviour {
+public class Client : MonoBehaviour {
     string IP = "";
     int port = 1234;
-    string message = "";
+
+    void Start() {
+
+    }
+
+    void Update() {
+        switch (Network.peerType) {
+            case NetworkPeerType.Server:
+                break;
+            case NetworkPeerType.Client:
+                onClient();
+                break;
+            case NetworkPeerType.Connecting:
+                break;
+            default:
+                break;
+        }
+    }
 
     void OnGUI() {
         if (Network.peerType == NetworkPeerType.Disconnected) {
@@ -28,36 +45,31 @@ public class client : MonoBehaviour {
     }
 
     public void onClient() {
-        if (Input.GetButton("Fire1")) {
-            message = (float)Input.mousePosition.x / Screen.width + ", " + (float)Input.mousePosition.y / Screen.height;
-        } else {
-            message = "untouch";
+        if (Input.GetKeyUp(KeyCode.Alpha1)) {
+            sendMessage("1");
         }
+        if (Input.GetKeyUp(KeyCode.Alpha2)) {
+            sendMessage("2");
+        }
+    }
+
+    void sendMessage(string message) {
         GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
     }
 
+    void recvMessage(string message) {
+        Debug.Log(message);
+    }
+
     [RPC]
-    void reciveMessage(string msg, NetworkMessageInfo info) {
-        message = msg;
-    }
+    void reciveMessage(string message, NetworkMessageInfo info) {
+        NetworkPlayer sender = info.sender;
+        if (sender.ToString() == "-1") {
+            sender = Network.player;
+        }
 
-	// Use this for initialization
-	void Start () {
-
-    }
-	
-	// Update is called once per frame
-	void Update () {
-        switch (Network.peerType) {
-            case NetworkPeerType.Server:
-                break;
-            case NetworkPeerType.Client:
-                onClient();
-                break;
-            case NetworkPeerType.Connecting:
-                break;
-            default:
-                break;
+        if (sender != Network.player) {
+            recvMessage(message);
         }
     }
 }
