@@ -22,7 +22,6 @@ public class Server : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        //fixCanvasWidth();
         rotateHead();
     }
 
@@ -39,50 +38,40 @@ public class Server : MonoBehaviour {
         return new Vector2(-1, -1);
     }
 
+    private bool mouseHidden = false;
+    private float rotationY = 0F;
+
     void rotateHead() {
         if (Application.platform == RuntimePlatform.WindowsEditor) {
-            //trackingSpace.transform.rotation (ON_PC) == InputTracking.GetLocalRotation(VRNode.CenterEye) (!ON_PC)
-            if (Input.GetKey(KeyCode.W)) {
-                trackingSpace.transform.Rotate(-Time.deltaTime * 50f, 0f, 0f);
-            }
-            if (Input.GetKey(KeyCode.S)) {
-                trackingSpace.transform.Rotate(+Time.deltaTime * 50f, 0f, 0f);
-            }
-            if (Input.GetKey(KeyCode.A)) {
-                trackingSpace.transform.Rotate(0f, -Time.deltaTime * 50f, 0f);
-            }
-            if (Input.GetKey(KeyCode.D)) {
-                trackingSpace.transform.Rotate(0f, +Time.deltaTime * 50f, 0f);
-            }
-            if (Input.GetKey(KeyCode.R)) {
-                trackingSpace.transform.rotation = new Quaternion();
+            //trackingSpace.transform.rotation (ON_PC) == InputTracking.GetLocalRotation(VRNode.CenterEye) (ON_VR)
+            if (Input.GetKeyUp(KeyCode.H)) {
+                mouseHidden ^= true;
             }
 
-            if (Network.connections.Length > 0) {
-                cameraCoordinate.transform.rotation = trackingSpace.transform.rotation;
-            }
-            else {
-                if (Input.GetKey(KeyCode.H)) {
+            if (mouseHidden) {
+                Screen.lockCursor = true;
+
+                float rotationX = trackingSpace.transform.localEulerAngles.y + Input.GetAxis("Mouse X") * 5f;
+                rotationY += Input.GetAxis("Mouse Y") * 5f; 
+                rotationY = Mathf.Clamp(rotationY, -60f, 60f);
+                trackingSpace.transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
+
+                if (Input.GetButton("Fire1")) {
                     headWriting(aimPos());
-                }
-                else {
+                } else {
                     moveCursor(aimPos());
                     confirm();
                 }
+            } else {
+                Screen.lockCursor = false;
             }
         }
         else {
-            if (Network.connections.Length > 0) {
-                cameraCoordinate.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
-            }
-            else {
-                if (Input.GetButton("Fire1")) {
-                    headWriting(aimPos());
-                }
-                else {
-                    moveCursor(aimPos());
-                    confirm();
-                }
+            if (Input.GetButton("Fire1")) {
+                headWriting(aimPos());
+            } else {
+                moveCursor(aimPos());
+                confirm();
             }
         }
     }
@@ -91,11 +80,6 @@ public class Server : MonoBehaviour {
         if (tracking.GetComponent<Tracking>().stopDrawing()) {
             keyboard.GetComponent<keyboard>().confirm();
         }
-    }
-
-    void fixCanvasWidth() {
-        canvas.sizeDelta = new Vector2(canvas.rect.height * Screen.width / Screen.height, canvas.rect.height);
-        canvas.GetComponent<BoxCollider>().size = new Vector3(canvas.sizeDelta.x, canvas.sizeDelta.y, 0.01f);
     }
 
     void headWriting(Vector2 pos) {
