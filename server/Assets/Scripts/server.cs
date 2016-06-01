@@ -78,7 +78,7 @@ public class Server : MonoBehaviour {
 
     void confirm() {
         if (tracking.GetComponent<Tracking>().stopDrawing()) {
-            keyboard.GetComponent<keyboard>().confirm();
+            keyboard.GetComponent<Keyboard>().confirm();
         }
     }
 

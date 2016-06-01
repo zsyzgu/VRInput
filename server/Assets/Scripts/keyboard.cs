@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class keyboard : MonoBehaviour {
+public class Keyboard : MonoBehaviour {
     public RectTransform cursor;
     public Text screen;
     private RectTransform hoverKey = null;
@@ -51,22 +51,22 @@ public class keyboard : MonoBehaviour {
         if (hoverKey != null) {
             if (hoverKey.name == "keyDelete") {
                 screen.text = deleteWord(screen.text);
-                GetComponent<dictionary>().clearPos();
+                GetComponent<Dictionary>().clearPos();
                 return;
             }
             if (hoverKey.name.Length >= 7 && hoverKey.name.Substring(0, 6) == "select") {
                 screen.text = deleteWord(screen.text) + hoverKey.GetComponentInChildren<Text>().text;
-                GetComponent<dictionary>().clearPos();
+                GetComponent<Dictionary>().clearPos();
                 return;
             }
         }
 
-        wordList = GetComponent<dictionary>().getWordList();
+        wordList = GetComponent<Dictionary>().getWordList();
         foreach (RectTransform key in transform) {
             if (key.name.Length >= 7 && key.name.Substring(0, 6) == "select") {
                 int rank = key.name[6] - '0';
                 if (rank < wordList.Count) {
-                    key.GetComponentInChildren<Text>().text = ((dictionary.Word)wordList[rank]).word + " ";
+                    key.GetComponentInChildren<Text>().text = ((Dictionary.Word)wordList[rank]).word + " ";
                 }
                 else {
                     key.GetComponentInChildren<Text>().text = "";
@@ -74,8 +74,8 @@ public class keyboard : MonoBehaviour {
             }
         }
         if (wordList.Count > 0) {
-            screen.text += ((dictionary.Word)wordList[0]).word + " ";
-            GetComponent<dictionary>().clearPos();
+            screen.text += ((Dictionary.Word)wordList[0]).word + " ";
+            GetComponent<Dictionary>().clearPos();
         }
     }
 }

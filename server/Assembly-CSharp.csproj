@@ -73,12 +73,11 @@
      <Compile Include="Assets\OVR\Scripts\Util\OVRSceneSampleController.cs" />
      <Compile Include="Assets\OVR\Scripts\Util\OVRScreenFade.cs" />
      <Compile Include="Assets\OVR\Scripts\Util\OVRTrackerBounds.cs" />
+     <Compile Include="Assets\Scripts\Dictionary.cs" />
+     <Compile Include="Assets\Scripts\Keyboard.cs" />
      <Compile Include="Assets\Scripts\Server.cs" />
      <Compile Include="Assets\Scripts\Tracking.cs" />
      <Compile Include="Assets\Scripts\client.cs" />
-     <Compile Include="Assets\Scripts\dictionary.cs" />
-     <Compile Include="Assets\Scripts\keyboard.cs" />
-     <Compile Include="Assets\Scripts\selector.cs" />
      <None Include="Assets\Resources\lexicon.txt" />
      <None Include="Assets\OVR\Moonlight\Shaders\OVRColorRampAlpha.shader" />
      <None Include="Assets\OVR\Moonlight\Shaders\Unlit Crosshair.shader" />

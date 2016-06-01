@@ -2,10 +2,10 @@
 using System.IO;
 using System.Collections;
 
-public class dictionary : MonoBehaviour {
+public class Dictionary : MonoBehaviour {
     // script on keyboard
     public const int MAX_WORD = 5000;
-    public const int SAMPLE = 30, POSLIST_SAMPLE = 50;
+    public const int METRIC_SAMPLE = 30, POSLIST_SAMPLE = 50;
 
     public class Word {
         public float pri;
@@ -100,17 +100,17 @@ public class dictionary : MonoBehaviour {
         for (int i = 0; i + 1 < A.Count; i++) {
             lenA += Vector2.Distance((Vector2)A[i], (Vector2)A[i + 1]);
         }
-        lenA /= (SAMPLE - 1);
+        lenA /= (METRIC_SAMPLE - 1);
 
         float lenB = 0;
         for (int i = 0; i + 1 < B.Count; i++) {
             lenB += Vector2.Distance((Vector2)B[i], (Vector2)B[i + 1]);
         }
-        lenB /= (SAMPLE - 1);
+        lenB /= (METRIC_SAMPLE - 1);
 
         int u = 0, v = 0;
         float leftA = 0, leftB = 0;
-        for (int k = 0; k < SAMPLE; k++) {
+        for (int k = 0; k < METRIC_SAMPLE; k++) {
             while (u + 1 < A.Count && Vector2.Distance((Vector2)A[u], (Vector2)A[u + 1]) <= leftA) {
                 leftA -= Vector2.Distance((Vector2)A[u], (Vector2)A[u + 1]);
                 u++;
@@ -132,7 +132,7 @@ public class dictionary : MonoBehaviour {
             leftB += lenB;
         }
 
-        ret /= SAMPLE;
+        ret /= METRIC_SAMPLE;
         return ret;
     }
 }
