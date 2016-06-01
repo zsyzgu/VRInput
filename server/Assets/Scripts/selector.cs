@@ -4,7 +4,7 @@ using System.Collections;
 public class selector : MonoBehaviour {
     void OnGUI() {
         if (GUILayout.Button("Server")) {
-            GetComponent<server>().enabled = true;
+            GetComponent<Server>().enabled = true;
             this.enabled = false;
         }
         if (GUILayout.Button("Client")) {

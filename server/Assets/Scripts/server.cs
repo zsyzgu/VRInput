@@ -3,13 +3,13 @@ using System.Collections;
 using UnityEngine.VR;
 using UnityEngine.UI;
 
-public class server : MonoBehaviour {
+public class Server : MonoBehaviour {
     public GameObject trackingSpace;
-    public GameObject canvasParent;
+    public GameObject cameraCoordinate;
     public RectTransform canvas;
     public RectTransform cursor;
     public GameObject keyboard;
-    public GameObject trackCanvas;
+    public GameObject tracking;
 
     void OnGUI() {
 
@@ -59,7 +59,7 @@ public class server : MonoBehaviour {
             }
 
             if (Network.connections.Length > 0) {
-                canvasParent.transform.rotation = trackingSpace.transform.rotation;
+                cameraCoordinate.transform.rotation = trackingSpace.transform.rotation;
             }
             else {
                 if (Input.GetKey(KeyCode.H)) {
@@ -73,7 +73,7 @@ public class server : MonoBehaviour {
         }
         else {
             if (Network.connections.Length > 0) {
-                canvasParent.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
+                cameraCoordinate.transform.rotation = InputTracking.GetLocalRotation(VRNode.CenterEye);
             }
             else {
                 if (Input.GetButton("Fire1")) {
@@ -88,7 +88,7 @@ public class server : MonoBehaviour {
     }
 
     void confirm() {
-        if (trackCanvas.GetComponent<trackCanvas>().stopDrawing()) {
+        if (tracking.GetComponent<Tracking>().stopDrawing()) {
             keyboard.GetComponent<keyboard>().confirm();
         }
     }
@@ -106,7 +106,7 @@ public class server : MonoBehaviour {
         moveCursor(pos);
 
         //Draw line
-        trackCanvas.GetComponent<trackCanvas>().drawLine(1 - pos.x, pos.y);
+        tracking.GetComponent<Tracking>().drawLine(1 - pos.x, pos.y);
 
         //Record gesture input
         keyboard.GetComponent<dictionary>().addPos(new Vector2(1 - pos.x, pos.y));
