@@ -25,12 +25,12 @@ public class Server : MonoBehaviour {
         rotateHead();
     }
 
-    Vector2 aimPos() {
+   Vector2 aimPos() {
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo)) {
             Vector2 pos = (Vector2)(canvas.transform.worldToLocalMatrix * hitInfo.point);
-            float x = 1 - (pos.x / canvas.rect.width + 0.5f);
+            float x = pos.x / canvas.rect.width + 0.5f;
             float y = pos.y / canvas.rect.height + 0.5f;
             Vector2 ret = new Vector2(x, y);
             return ret;
@@ -57,9 +57,9 @@ public class Server : MonoBehaviour {
                 trackingSpace.transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
 
                 if (Input.GetButton("Fire1")) {
-                    headWriting(aimPos());
+                    headWriting();
                 } else {
-                    moveCursor(aimPos());
+                    moveCursor();
                     confirm();
                 }
             } else {
@@ -68,9 +68,9 @@ public class Server : MonoBehaviour {
         }
         else {
             if (Input.GetButton("Fire1")) {
-                headWriting(aimPos());
+                headWriting();
             } else {
-                moveCursor(aimPos());
+                moveCursor();
                 confirm();
             }
         }
@@ -82,22 +82,25 @@ public class Server : MonoBehaviour {
         }
     }
 
-    void headWriting(Vector2 pos) {
+    void headWriting() {
+        Vector2 pos = aimPos();
+
         if (pos.x < 0) {
             return;
         }
 
-        moveCursor(pos);
+        moveCursor();
 
         //Draw line
-        tracking.GetComponent<Tracking>().drawLine(1 - pos.x, pos.y);
+        tracking.GetComponent<Tracking>().drawLine(pos.x, pos.y);
 
         //Record gesture input
-        keyboard.GetComponent<dictionary>().addPos(new Vector2(1 - pos.x, pos.y));
+        keyboard.GetComponent<dictionary>().addPos(new Vector2(pos.x, pos.y));
     }
 
-    void moveCursor(Vector2 pos) {
-        float cursorX = (0.5f - pos.x) * canvas.rect.width;
+    void moveCursor() {
+    Vector2 pos = aimPos();
+        float cursorX = (pos.x - 0.5f) * canvas.rect.width;
         float cursorY = (pos.y - 0.5f) * canvas.rect.height;
         cursor.localPosition = new Vector3(cursorX, cursorY, 0f);
     }
