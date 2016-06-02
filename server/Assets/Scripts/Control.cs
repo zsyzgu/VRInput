@@ -59,29 +59,27 @@ public class Control : MonoBehaviour {
                 rotationY = Mathf.Clamp(rotationY, -60f, 60f);
                 trackingSpace.transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
 
-                if (Input.GetButton("Fire1")) {
-                    headWriting();
-                } else {
-                    moveCursor();
-                    confirm();
-                }
+                mainControl();
             } else {
                 Screen.lockCursor = false;
             }
         }
         else {
-            if (Input.GetButton("Fire1")) {
-                headWriting();
-            } else {
-                moveCursor();
-                confirm();
-            }
+            mainControl();
         }
     }
 
-    void confirm() {
-        if (tracking.GetComponent<Tracking>().stopDrawing()) {
-            keyboard.GetComponent<Keyboard>().confirm();
+    void mainControl() {
+        if (Server.tapIsOn()) {
+            if (Input.GetButton("Fire1")) {
+                headWriting();
+            }
+            else {
+                moveCursor();
+                if (tracking.GetComponent<Tracking>().stopDrawing()) {
+                    keyboard.GetComponent<Keyboard>().confirm();
+                }
+            }
         }
     }
     
