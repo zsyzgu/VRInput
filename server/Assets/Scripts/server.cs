@@ -8,7 +8,9 @@ public class Server : MonoBehaviour {
     static private Server server;
     public Canvas canvas;
     public Text infoText;
+    public GameObject scene;
     public bool tapOn = true;
+    public bool sceneOn = false;
     private int port = 1234;
     private string IP = "";
 
@@ -97,10 +99,11 @@ public class Server : MonoBehaviour {
 
     void recvMessage(string message) {
         if (message == "1") {
-            tapOn = true;
+            tapOn ^= true;
         }
         if (message == "2") {
-            tapOn = false;
+            sceneOn ^= true;
+            scene.active = sceneOn;
         }
         if (message == "3") {
             RectTransform rect = canvas.GetComponent<RectTransform>();
@@ -114,16 +117,6 @@ public class Server : MonoBehaviour {
 
     [RPC]
     void reciveMessage(string message, NetworkMessageInfo info) {
-        NetworkPlayer sender = info.sender;
-        if (sender.ToString() == "-1") {
-            sender = Network.player;
-        }
-
-        if (sender != Network.player) {
-            recvMessage(message);
-        }
-
-        //TODO
         recvMessage(message);
     }
 }

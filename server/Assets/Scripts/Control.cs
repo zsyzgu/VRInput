@@ -69,15 +69,49 @@ public class Control : MonoBehaviour {
         }
     }
 
+    private bool drawing = false;
+    private bool selecting = false;
+
     void mainControl() {
+        Keyboard board = keyboard.GetComponent<Keyboard>();
+
         if (Server.tapIsOn()) {
             if (Input.GetButton("Fire1")) {
                 headWriting();
-            }
-            else {
+            } else {
                 moveCursor();
                 if (tracking.GetComponent<Tracking>().stopDrawing()) {
-                    keyboard.GetComponent<Keyboard>().confirm();
+                    board.confirm();
+                }
+            }
+        } else {
+            if (drawing && board.cursorInsideKeyboard()) {
+                headWriting();
+            } else {
+                //GESTURE END
+                drawing = false;
+                moveCursor();
+                if (tracking.GetComponent<Tracking>().stopDrawing()) {
+                    board.confirm();
+                }
+            }
+            if (drawing == false) {
+                if (board.cursorInsideHomeKey()) {
+                    //GESTURE BEGIN & SELECTING END
+                    drawing = true;
+                    selecting = false;
+                }
+            }
+
+            if (!selecting && !board.cursorInsideKeyboard()) {
+                //SELECTING BEGIN
+                selecting = true;
+            }
+            if (selecting) {
+                if (board.cursorInsideCmdKeys()) {
+                    //SELECTING END
+                    selecting = false;
+                    board.confirm();
                 }
             }
         }

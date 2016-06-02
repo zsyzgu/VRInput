@@ -14,6 +14,8 @@ public class Dictionary : MonoBehaviour {
     ArrayList lexicon = new ArrayList();
     ArrayList posList = new ArrayList();
 
+    private float endPosY = 0;
+
     public class WordComparer : IComparer {
         public int Compare(object x, object y) {
             if (((Word)x).pri < ((Word)y).pri) {
@@ -27,8 +29,13 @@ public class Dictionary : MonoBehaviour {
     }
 
 	void Start () {
+        inputLexicon();
+        calnEndPosY();
+	}
+
+    void inputLexicon() {
         string[] lines = {};
-        
+
         TextAsset textAsset = Resources.Load("lexicon") as TextAsset;
         lines = textAsset.text.Split('\n');
 
@@ -42,11 +49,25 @@ public class Dictionary : MonoBehaviour {
                 break;
             }
         }
-	}
+    }
+
+    void calnEndPosY() {
+        float keyTY = calnLetterPos('t').y;
+        float keyGY = calnLetterPos('g').y;
+        endPosY = keyGY + (keyTY - keyGY) * 2.5f;
+    }
     
 	void Update () {
         
 	}
+
+    Vector2 calnLetterPos(char ch) {
+        RectTransform key = transform.FindChild("key" + (char)(ch - 'a' + 'A')).GetComponent<RectTransform>();
+        RectTransform canvas = transform.parent.GetComponent<RectTransform>();
+        float x = key.localPosition.x / canvas.rect.width + 0.5f;
+        float y = key.localPosition.y / canvas.rect.height + 0.5f;
+        return new Vector2(x, y);
+    }
 
     public ArrayList getWordList() {
         if (posList.Count == 0) {
@@ -66,12 +87,20 @@ public class Dictionary : MonoBehaviour {
         for (int i = 0; i < lexicon.Count; i++) {
             ArrayList wordPosList = new ArrayList();
             string str = ((Word)lexicon[i]).word;
-            for (int j = 0; j < str.Length; j++) {
-                RectTransform key = transform.FindChild("key" + (char)(str[j] - 'a' + 'A')).GetComponent<RectTransform>();
-                RectTransform canvas = transform.parent.GetComponent<RectTransform>();
-                float x = key.localPosition.x / canvas.rect.width + 0.5f;
-                float y = key.localPosition.y / canvas.rect.height + 0.5f;
-                wordPosList.Add(new Vector2(x, y));
+
+            if (Server.tapIsOn()) {
+                for (int j = 0; j < str.Length; j++) {
+                    wordPosList.Add(calnLetterPos(str[j]));
+                }
+            } else {
+                wordPosList.Add(calnLetterPos('g'));
+
+                for (int j = 0; j < str.Length; j++) {
+                    wordPosList.Add(calnLetterPos(str[j]));
+                }
+
+                Vector2 pos = (Vector2)wordPosList[wordPosList.Count - 1];
+                wordPosList.Add(new Vector2(pos.x, endPosY));
             }
 
             Word word = new Word();

@@ -8,6 +8,7 @@ public class Keyboard : MonoBehaviour {
 
     private Output output;
     private RectTransform hoverKey = null;
+    private RectTransform homeKey = null;
     private ArrayList wordList = new ArrayList();
     private int selectNum = 0;
     private int page = 0;
@@ -16,6 +17,7 @@ public class Keyboard : MonoBehaviour {
     void Start () {
         output = outputScreen.GetComponent<Output>();
         calnSelectNum();
+        searchHomeKey();
     }
 	
 	// Update is called once per frame
@@ -28,6 +30,14 @@ public class Keyboard : MonoBehaviour {
         foreach (RectTransform key in transform) {
             if (key.tag == "select") {
                 selectNum++;
+            }
+        }
+    }
+
+    void searchHomeKey() {
+        foreach (RectTransform key in transform) {
+            if (key.name == "keyG") {
+                homeKey = key;
             }
         }
     }
@@ -71,12 +81,40 @@ public class Keyboard : MonoBehaviour {
     }
 
     bool cursorInsideKey(RectTransform key) {
-        if (cursor.localPosition.x < key.localPosition.x - key.rect.width * key.localScale.x / 2 || cursor.localPosition.x > key.localPosition.x + key.rect.width * key.localScale.x / 2) return false;
-        if (cursor.localPosition.y < key.localPosition.y - key.rect.height * key.localScale.y / 2 || cursor.localPosition.y > key.localPosition.y + key.rect.height * key.localScale.y / 2) return false;
+        if (cursor.localPosition.x < key.localPosition.x - key.rect.width * key.localScale.x / 2) return false;
+        if (cursor.localPosition.x > key.localPosition.x + key.rect.width * key.localScale.x / 2) return false;
+        if (cursor.localPosition.y < key.localPosition.y - key.rect.height * key.localScale.y / 2) return false;
+        if (cursor.localPosition.y > key.localPosition.y + key.rect.height * key.localScale.y / 2) return false;
         return true;
     }
 
+    public bool cursorInsideKeyboard() {
+        RectTransform board = gameObject.GetComponent<RectTransform>();
+        if (cursor.localPosition.x < board.localPosition.x - board.rect.width * board.localScale.x / 2) return false;
+        if (cursor.localPosition.x > board.localPosition.x + board.rect.width * board.localScale.x / 2) return false;
+        if (cursor.localPosition.y < board.localPosition.y - board.rect.height * board.localScale.y / 2) return false;
+        if (cursor.localPosition.y > board.localPosition.y + board.rect.height * board.localScale.y / 2) return false;
+        return true;
+    }
+
+    public bool cursorInsideHomeKey() {
+        return cursorInsideKey(homeKey);
+    }
+
+    public bool cursorInsideCmdKeys() {
+        foreach (RectTransform key in transform) {
+            if (key.tag == "select" || key.tag == "delete" || key.tag == "page") {
+                if (cursorInsideKey(key)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void confirm() {
+        updateHover();
+
         if (hoverKey != null && hoverKey.tag == "delete") {
             Server.log("delete");
             output.deleteWord();
@@ -85,7 +123,7 @@ public class Keyboard : MonoBehaviour {
             return;
         }
 
-        if (hoverKey != null && hoverKey.tag == "select") {
+        if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
             Server.log("select");
             output.deleteWord();
             output.addWord(hoverKey.GetComponentInChildren<Text>().text);
