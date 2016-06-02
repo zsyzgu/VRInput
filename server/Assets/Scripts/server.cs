@@ -1,13 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using System.Net;
+using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
     static private Server server;
     public Canvas canvas;
+    public Text infoText;
+    public bool tapOn = true;
     private int port = 1234;
+    private string IP = "";
 
     void Start() {
         server = this;
+        IP = getIP();
+    }
+
+    string getIP() {
+        IPHostEntry host;
+        string localIP = "";
+        host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (IPAddress ip in host.AddressList) {
+            if (ip.AddressFamily == AddressFamily.InterNetwork) {
+                localIP = ip.ToString();
+                break;
+            }
+        }
+        return localIP;
     }
 
     void Update() {
@@ -23,6 +43,11 @@ public class Server : MonoBehaviour {
                 break;
         }
 
+        command();
+        outputInfo();
+    }
+
+    void command() {
         if (Input.GetKeyUp(KeyCode.Alpha1)) {
             sendMessage("1");
         }
@@ -35,6 +60,16 @@ public class Server : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Alpha4)) {
             sendMessage("4");
         }
+    }
+
+    void outputInfo() {
+        string info = "";
+        info += "IP : " + IP + "\n";
+        RectTransform rect = canvas.GetComponent<RectTransform>();
+        info += "SIZE : " + rect.localScale.x + "\n";
+        info += "TAP : " + (tapOn ? "ON" : "OFF"); 
+
+        infoText.text = info;
     }
 
     void startServer() {
@@ -52,16 +87,20 @@ public class Server : MonoBehaviour {
         server.sendMessage(Time.time + " " + message);
     }
 
+    static public bool tapIsOn() {
+        return server.tapOn;
+    }
+
     void sendMessage(string message) {
         GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
     }
 
     void recvMessage(string message) {
         if (message == "1") {
-
+            tapOn = true;
         }
         if (message == "2") {
-           
+            tapOn = false;
         }
         if (message == "3") {
             RectTransform rect = canvas.GetComponent<RectTransform>();
@@ -84,6 +123,7 @@ public class Server : MonoBehaviour {
             recvMessage(message);
         }
 
+        //TODO
         recvMessage(message);
     }
 }
