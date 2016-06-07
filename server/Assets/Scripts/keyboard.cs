@@ -124,9 +124,10 @@ public class Keyboard : MonoBehaviour {
         }
 
         if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
-            Server.log("select");
+            string word = hoverKey.GetComponentInChildren<Text>().text;
+            Server.log("select " + word);
             output.deleteWord();
-            output.addWord(hoverKey.GetComponentInChildren<Text>().text);
+            output.addWord(word);
             page = 0;
             GetComponent<Dictionary>().clearPos();
             clearSelect();
@@ -146,12 +147,12 @@ public class Keyboard : MonoBehaviour {
             return;
         }
 
-        Server.log("endGesture");
         wordList = GetComponent<Dictionary>().getWordList();
         GetComponent<Dictionary>().clearPos();
 
         drawSelect();
-        drawDefaultWord();
+        string defaultWord = drawDefaultWord();
+        Server.log("endGesture " + defaultWord);
     }
 
     void drawSelect() {
@@ -175,10 +176,13 @@ public class Keyboard : MonoBehaviour {
         }
     }
 
-    void drawDefaultWord() {
+    string drawDefaultWord() {
+        string word = "";
         if (wordList.Count > 0) {
-            output.addWord(((Dictionary.Word)wordList[0]).word);
+            word = ((Dictionary.Word)wordList[0]).word;
+            output.addWord(word);
             page = 0;
         }
+        return word;
     }
 }
