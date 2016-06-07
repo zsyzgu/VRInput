@@ -27,6 +27,7 @@ public class Output : MonoBehaviour {
 	
 	void Update () {
 	    if (phrasesField.text == "") {
+            Server.log("phraseUpdate");
             phrasesField.text = getPhrase();
         }
 	}

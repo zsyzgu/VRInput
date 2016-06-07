@@ -92,23 +92,28 @@ public class Server : MonoBehaviour {
     }
 
     void sendMessage(string message) {
+        Debug.Log(message);
         GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
     }
 
     void recvMessage(string message) {
         if (message == "1") {
             tapOn = true;
+            log("tap on");
         }
         if (message == "2") {
             tapOn = false;
+            log("tap off");
         }
         if (message == "3") {
             RectTransform rect = canvas.GetComponent<RectTransform>();
             rect.localScale = new Vector3(rect.localScale.x + 0.1f, rect.localScale.y + 0.1f, rect.localScale.z);
+            log("size " + rect.localScale.x);
         }
         if (message == "4") {
             RectTransform rect = canvas.GetComponent<RectTransform>();
             rect.localScale = new Vector3(rect.localScale.x - 0.1f, rect.localScale.y - 0.1f, rect.localScale.z);
+            log("size " + rect.localScale.x);
         }
     }
 
