@@ -92,7 +92,6 @@ public class Server : MonoBehaviour {
     }
 
     void sendMessage(string message) {
-        Debug.Log(message);
         GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
     }
 
