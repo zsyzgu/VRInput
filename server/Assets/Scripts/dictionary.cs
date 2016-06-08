@@ -6,6 +6,7 @@ public class Dictionary : MonoBehaviour {
     // script on keyboard
     public const int MAX_WORD = 5000;
     public const int METRIC_SAMPLE = 20, POSLIST_SAMPLE = 50;
+    public const float DIST_THRESHOLD = 0.2f;
 
     public class Word {
         public float pri;
@@ -88,25 +89,40 @@ public class Dictionary : MonoBehaviour {
             ArrayList wordPosList = new ArrayList();
             string str = ((Word)lexicon[i]).word;
 
+            Vector2 beginPos = calnLetterPos(str[0]);
+            Vector2 endPos = calnLetterPos(str[str.Length - 1]);
+            if (Server.tapIsOn() == false) {
+                beginPos = calnLetterPos('g');
+                endPos.y = endPosY;
+            }
+
+            if (Vector2.Distance((Vector2)posList[0], beginPos) > DIST_THRESHOLD) {
+                continue;
+            }
+            if (Vector2.Distance((Vector2)posList[posList.Count - 1], endPos) > DIST_THRESHOLD) {
+                continue;
+            }
+
             if (Server.tapIsOn()) {
                 for (int j = 0; j < str.Length; j++) {
                     wordPosList.Add(calnLetterPos(str[j]));
                 }
             } else {
-                wordPosList.Add(calnLetterPos('g'));
+                wordPosList.Add(beginPos);
 
                 for (int j = 0; j < str.Length; j++) {
                     wordPosList.Add(calnLetterPos(str[j]));
                 }
-
-                Vector2 pos = (Vector2)wordPosList[wordPosList.Count - 1];
-                wordPosList.Add(new Vector2(pos.x, endPosY));
+                
+                wordPosList.Add(endPos);
             }
 
             Word word = new Word();
             word.word = str;
             word.pri = calnPri(posList, wordPosList);
-            wordList.Add(word);
+            if (word.pri >= 0) {
+                wordList.Add(word);
+            }
         }
         
         wordList.Sort(new WordComparer());
@@ -168,6 +184,9 @@ public class Dictionary : MonoBehaviour {
                 posB += ((Vector2)B[v + 1] - (Vector2)B[v]) * (leftB / Vector2.Distance((Vector2)B[v], (Vector2)B[v + 1]));
             }
             float dist = Vector2.Distance(posA, posB);
+            if (dist > DIST_THRESHOLD) {
+                return -1;
+            }
             ret += dist;
             leftA += lenA;
             leftB += lenB;

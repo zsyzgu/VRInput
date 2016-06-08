@@ -68,8 +68,11 @@ public class Output : MonoBehaviour {
         inputField.text += str + " ";
         
         if (inputField.text.Substring(0, inputField.text.Length - 1) == phrasesField.text) {
-            phrasesField.text = getPhrase();
-            inputField.text = "";
+            if (Server.tapIsOn() || keyboard.GetComponent<Keyboard>().cursorInsideKeyboard()) {
+                //wait for select when tap is not on
+                phrasesField.text = getPhrase();
+                inputField.text = "";
+            }
         }
     }
 }
