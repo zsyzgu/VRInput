@@ -126,7 +126,9 @@ public class Keyboard : MonoBehaviour {
         if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
             string word = hoverKey.GetComponentInChildren<Text>().text;
             Server.log("select " + word);
-            output.deleteWord();
+            if (Server.tapIsOn()) {
+                output.deleteWord();
+            }
             output.addWord(word);
             page = 0;
             GetComponent<Dictionary>().clearPos();
@@ -151,8 +153,11 @@ public class Keyboard : MonoBehaviour {
         GetComponent<Dictionary>().clearPos();
 
         drawSelect();
-        string defaultWord = drawDefaultWord();
-        Server.log("endGesture " + defaultWord);
+        if (Server.tapIsOn()) {
+            //when tap is not on, user must select
+            string defaultWord = drawDefaultWord();
+            Server.log("endGesture " + defaultWord);
+        }
     }
 
     void drawSelect() {
