@@ -79,6 +79,22 @@ public class Keyboard : MonoBehaviour {
         colors.normalColor = color;
         key.GetComponent<Button>().colors = colors;
     }
+    
+    bool allPosInsideHoverKey() {
+        RectTransform canvas = transform.parent.GetComponent<RectTransform>();
+        float x = hoverKey.localPosition.x / canvas.rect.width + 0.5f;
+        float y = hoverKey.localPosition.y / canvas.rect.height + 0.5f;
+        float w = hoverKey.rect.width * hoverKey.localScale.x / canvas.rect.width;
+        float h = hoverKey.rect.height * hoverKey.localScale.y / canvas.rect.height;
+
+        ArrayList posList = GetComponent<Dictionary>().getPosList();
+        for (int i = 0; i < posList.Count; i++) {
+            Vector2 pos = (Vector2)posList[i];
+            if (pos.x < x - w / 2 || pos.x > x + w / 2) return false;
+            if (pos.y < y - h / 2 || pos.y > y + h / 2) return false;
+        }
+        return true;
+    }
 
     bool cursorInsideKey(RectTransform key) {
         if (cursor.localPosition.x < key.localPosition.x - key.rect.width * key.localScale.x / 2) return false;
@@ -103,7 +119,7 @@ public class Keyboard : MonoBehaviour {
 
     public bool cursorInsideCmdKeys() {
         foreach (RectTransform key in transform) {
-            if (key.tag == "select" || key.tag == "delete" || key.tag == "page") {
+            if (key.tag == "select" || key.tag == "delete" || key.tag == "page" || key.tag == "control") {
                 if (cursorInsideKey(key)) {
                     return true;
                 }
@@ -113,17 +129,15 @@ public class Keyboard : MonoBehaviour {
     }
 
     public void confirm() {
+        Dictionary dictionary = GetComponent<Dictionary>();
         updateHover();
 
         if (hoverKey != null && hoverKey.tag == "delete") {
             Server.log("delete");
             output.deleteWord();
             page = 0;
-            GetComponent<Dictionary>().clearPos();
-            return;
-        }
-
-        if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
+            dictionary.clearPos();
+        } else if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
             string word = hoverKey.GetComponentInChildren<Text>().text;
             Server.log("select " + word);
             if (Server.tapIsOn()) {
@@ -131,12 +145,9 @@ public class Keyboard : MonoBehaviour {
             }
             output.addWord(word);
             page = 0;
-            GetComponent<Dictionary>().clearPos();
+            dictionary.clearPos();
             clearSelect();
-            return;
-        }
-        
-        if (hoverKey != null && hoverKey.tag == "page") {
+        } else if (hoverKey != null && hoverKey.tag == "page") {
             if (hoverKey.name == "lastPage" && canLastPage()) {
                 Server.log("lastPage");
                 page--;
@@ -146,17 +157,29 @@ public class Keyboard : MonoBehaviour {
                 page++;
             }
             drawSelect();
-            return;
-        }
+        } else if (hoverKey != null && hoverKey.tag == "control") {
 
-        wordList = GetComponent<Dictionary>().getWordList();
-        GetComponent<Dictionary>().clearPos();
+        } else {
+            //hover on letter or symbol
+            //TODO: what if !tapIsOn
+            if (Server.tapIsOn() && allPosInsideHoverKey()) {
+                char ch = hoverKey.GetComponentInChildren<Text>().text[0];
+                if (char.IsLetter(ch)) {
+                    ch = char.ToLower(ch);
+                }
+                output.addChar(ch);
+                Server.log("singlePoint" + ch);
+            } else {
+                wordList = dictionary.getWordList();
 
-        drawSelect();
-        if (Server.tapIsOn()) {
-            //when tap is not on, user must select
-            string defaultWord = drawDefaultWord();
-            Server.log("endGesture " + defaultWord);
+                drawSelect();
+                if (Server.tapIsOn()) {
+                    //when tap is not on, user must select
+                    string defaultWord = drawDefaultWord();
+                    Server.log("endGesture " + defaultWord);
+                }
+            }
+            dictionary.clearPos();
         }
     }
 

@@ -7,6 +7,7 @@ public class Output : MonoBehaviour {
     public Text phrasesField;
     public Text inputField;
 
+    private string inputText = "";
     private Dictionary dictionary;
     private System.Random random = new System.Random();
     private string[] phrases = {};
@@ -29,6 +30,11 @@ public class Output : MonoBehaviour {
 	    if (phrasesField.text == "") {
             Server.log("phraseUpdate");
             phrasesField.text = getPhrase();
+        }
+        if (Time.fixedTime - Mathf.Floor(Time.fixedTime) < 0.5f) {
+            inputField.text = inputText + "_";
+        } else {
+            inputField.text = inputText;
         }
 	}
 
@@ -55,21 +61,30 @@ public class Output : MonoBehaviour {
     }
 
     public void deleteWord() {
-        for (int i = inputField.text.Length - 2; i >= 0; i--) {
-            if (inputField.text[i] == ' ') {
-                inputField.text = inputField.text.Substring(0, i + 1);
+        for (int i = inputText.Length - 2; i >= 0; i--) {
+            if (inputText[i] == ' ') {
+                inputText = inputText.Substring(0, i + 1);
                 return;
             }
         }
-        inputField.text = "";
+        inputText = "";
     }
 
     public void addWord(string str) {
-        inputField.text += str + " ";
+        inputText += str + " ";
         
-        if (inputField.text.Substring(0, inputField.text.Length - 1) == phrasesField.text) {
+        if (inputText.Substring(0, inputText.Length - 1) == phrasesField.text) {
             phrasesField.text = getPhrase();
-            inputField.text = "";
+            inputText = "";
+        }
+    }
+
+    public void addChar(char ch) {
+        inputText += ch;
+
+        if (inputText == phrasesField.text) {
+            phrasesField.text = getPhrase();
+            inputText = "";
         }
     }
 }
