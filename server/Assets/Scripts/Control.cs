@@ -75,7 +75,7 @@ public class Control : MonoBehaviour {
     void mainControl() {
         Keyboard board = keyboard.GetComponent<Keyboard>();
 
-        if (Server.tapIsOn()) {
+        if (Server.isTapOn()) {
             if (Input.GetButton("Fire1")) {
                 headWriting();
             } else {

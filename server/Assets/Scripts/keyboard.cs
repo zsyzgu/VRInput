@@ -22,7 +22,7 @@ public class Keyboard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        updateHover();
+        updateKeysColor();
     }
 
     void calnSelectNum() {
@@ -44,27 +44,37 @@ public class Keyboard : MonoBehaviour {
     void updateHover() {
         hoverKey = null;
         foreach (RectTransform key in transform) {
-            if (key.name == "lastPage") {
-                if (canLastPage() == false) {
-                    setKeyColor(key, Color.gray);
-                    continue;
-                }
-                key.GetComponentInChildren<RawImage>().enabled = canLastPage();
-            }
-            if (key.name == "nextPage") {
-                if (canNextPage() == false) {
-                    setKeyColor(key, Color.gray);
-                    continue;
-                }
-                key.GetComponentInChildren<RawImage>().enabled = canNextPage();
-            }
-
             if (cursorInsideKey(key)) {
                 hoverKey = key;
-                setKeyColor(key, Color.yellow);
             }
-            else {
-                setKeyColor(key, Color.white);
+        }
+    }
+
+    void updateKeysColor() {
+        updateHover();
+        foreach (RectTransform key in transform) {
+            if (key.tag == "page") {
+                if (key.name == "lastPage" && canLastPage() == false) {
+                    setKeyColor(key, Color.gray);
+                } else if (key.name == "nextPage" && canNextPage() == false) {
+                    setKeyColor(key, Color.gray);
+                } else {
+                    setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
+                }
+            } else if (key.tag == "control") {
+                if (key == hoverKey) {
+                    setKeyColor(key, Color.yellow);
+                } else {
+                    if (key.name == "tapOn") {
+                        setKeyColor(key, Server.isTapOn() ? Color.white : Color.gray);
+                    } else if (key.name == "bigKeyboard") {
+                        setKeyColor(key, Server.isBigKeyboard() ? Color.white : Color.gray);
+                    } else if (key.name == "fastCursor") {
+                        setKeyColor(key, Server.isFastCursor() ? Color.white : Color.gray);
+                    }
+                }
+            } else {
+                setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
             }
         }
     }
@@ -148,7 +158,7 @@ public class Keyboard : MonoBehaviour {
         } else if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
             string word = hoverKey.GetComponentInChildren<Text>().text;
             Server.log("select " + word);
-            if (Server.tapIsOn()) {
+            if (Server.isTapOn()) {
                 output.delete();
             }
             output.addWord(word);
@@ -166,11 +176,18 @@ public class Keyboard : MonoBehaviour {
             }
             drawSelect();
         } else if (hoverKey != null && hoverKey.tag == "control") {
-
+            if (hoverKey.name == "tapOn") {
+                Server.setTapOn();
+            } else if (hoverKey.name == "bigKeyboard") {
+                Server.setBigKeyboard();
+            } else if (hoverKey.name == "fastCursor") {
+                Server.setFastCursor();
+            }
+            dictionary.clearPos();
         } else {
             //hover on letter or symbol
-            //TODO: what if !tapIsOn
-            if (Server.tapIsOn() && allPosInsideHoverKey()) {
+            //TODO: what if !isTapOn
+            if (Server.isTapOn() && allPosInsideHoverKey()) {
                 char ch = hoverKey.GetComponentInChildren<Text>().text[0];
                 if (char.IsLetter(ch)) {
                     ch = char.ToLower(ch);
@@ -181,7 +198,7 @@ public class Keyboard : MonoBehaviour {
                 wordList = dictionary.getWordList();
 
                 drawSelect();
-                if (Server.tapIsOn()) {
+                if (Server.isTapOn()) {
                     //when tap is not on, user must select
                     string defaultWord = drawDefaultWord();
                     Server.log("endGesture " + defaultWord);

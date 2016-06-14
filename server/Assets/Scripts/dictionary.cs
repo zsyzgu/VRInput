@@ -91,7 +91,7 @@ public class Dictionary : MonoBehaviour {
 
             Vector2 beginPos = calnLetterPos(str[0]);
             Vector2 endPos = calnLetterPos(str[str.Length - 1]);
-            if (Server.tapIsOn() == false) {
+            if (Server.isTapOn() == false) {
                 beginPos = calnLetterPos('g');
                 endPos.y = endPosY;
             }
@@ -103,7 +103,7 @@ public class Dictionary : MonoBehaviour {
                 continue;
             }
 
-            if (Server.tapIsOn()) {
+            if (Server.isTapOn()) {
                 for (int j = 0; j < str.Length; j++) {
                     wordPosList.Add(calnLetterPos(str[j]));
                 }

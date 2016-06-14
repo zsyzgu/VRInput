@@ -6,11 +6,16 @@ using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
     static private Server server;
+    static private float[] keyboardSize = {0.25f, 0.5f};
+
     public Canvas canvas;
     public Text infoText;
-    public bool tapOn = true;
     private int port = 1234;
     private string IP = "";
+
+    public bool tapOn = true;
+    public bool bigKeyboard = true;
+    public bool fastCursor = false;
 
     void Start() {
         server = this;
@@ -87,8 +92,42 @@ public class Server : MonoBehaviour {
         server.sendMessage(Time.time + " " + message);
     }
 
-    static public bool tapIsOn() {
+    static public bool isTapOn() {
         return server.tapOn;
+    }
+
+    static public void setTapOn() {
+        server.tapOn ^= true;
+        if (server.tapOn) {
+            log("tap on");
+        } else {
+            log("tap off");
+        }
+    }
+
+    static public bool isBigKeyboard() {
+        return server.bigKeyboard;
+    }
+
+    static public void setBigKeyboard() {
+        server.bigKeyboard ^= true;
+        RectTransform rect = server.canvas.GetComponent<RectTransform>();
+        float size = keyboardSize[(server.bigKeyboard) ? 1 : 0];
+        rect.localScale = new Vector3(size, size, size);
+        log("size " + size);
+    }
+
+    static public bool isFastCursor() {
+        return server.fastCursor;
+    }
+
+    static public void setFastCursor() {
+        server.fastCursor ^= true;
+        if (server.fastCursor) {
+            log("fastCursor on");
+        } else {
+            log("fastCursor off");
+        }
     }
 
     void sendMessage(string message) {
@@ -97,22 +136,13 @@ public class Server : MonoBehaviour {
 
     void recvMessage(string message) {
         if (message == "1") {
-            tapOn = true;
-            log("tap on");
+            setTapOn();
         }
         if (message == "2") {
-            tapOn = false;
-            log("tap off");
+            setBigKeyboard();
         }
         if (message == "3") {
-            RectTransform rect = canvas.GetComponent<RectTransform>();
-            rect.localScale = new Vector3(rect.localScale.x + 0.1f, rect.localScale.y + 0.1f, rect.localScale.z);
-            log("size " + rect.localScale.x);
-        }
-        if (message == "4") {
-            RectTransform rect = canvas.GetComponent<RectTransform>();
-            rect.localScale = new Vector3(rect.localScale.x - 0.1f, rect.localScale.y - 0.1f, rect.localScale.z);
-            log("size " + rect.localScale.x);
+            setFastCursor();
         }
     }
 
