@@ -23,7 +23,6 @@ public class Keyboard : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         updateHover();
-        updatePageButton();
     }
 
     void calnSelectNum() {
@@ -45,23 +44,27 @@ public class Keyboard : MonoBehaviour {
     void updateHover() {
         hoverKey = null;
         foreach (RectTransform key in transform) {
+            if (key.name == "lastPage") {
+                if (canLastPage() == false) {
+                    setKeyColor(key, Color.gray);
+                    continue;
+                }
+                key.GetComponentInChildren<RawImage>().enabled = canLastPage();
+            }
+            if (key.name == "nextPage") {
+                if (canNextPage() == false) {
+                    setKeyColor(key, Color.gray);
+                    continue;
+                }
+                key.GetComponentInChildren<RawImage>().enabled = canNextPage();
+            }
+
             if (cursorInsideKey(key)) {
                 hoverKey = key;
                 setKeyColor(key, Color.yellow);
             }
             else {
                 setKeyColor(key, Color.white);
-            }
-        }
-    }
-
-    void updatePageButton() {
-        foreach (RectTransform key in transform) {
-            if (key.name == "lastPage") {
-                key.GetComponentInChildren<RawImage>().enabled = canLastPage();
-            }
-            if (key.name == "nextPage") {
-                key.GetComponentInChildren<RawImage>().enabled = canNextPage();
             }
         }
     }
@@ -81,6 +84,9 @@ public class Keyboard : MonoBehaviour {
     }
     
     bool allPosInsideHoverKey() {
+        if (hoverKey == null) {
+            return false;
+        }
         RectTransform canvas = transform.parent.GetComponent<RectTransform>();
         float x = hoverKey.localPosition.x / canvas.rect.width + 0.5f;
         float y = hoverKey.localPosition.y / canvas.rect.height + 0.5f;
@@ -134,14 +140,16 @@ public class Keyboard : MonoBehaviour {
 
         if (hoverKey != null && hoverKey.tag == "delete") {
             Server.log("delete");
-            output.deleteWord();
+            output.delete();
             page = 0;
             dictionary.clearPos();
+            wordList.Clear();
+            drawSelect();
         } else if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
             string word = hoverKey.GetComponentInChildren<Text>().text;
             Server.log("select " + word);
             if (Server.tapIsOn()) {
-                output.deleteWord();
+                output.delete();
             }
             output.addWord(word);
             page = 0;

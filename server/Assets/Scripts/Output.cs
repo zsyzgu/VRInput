@@ -60,14 +60,22 @@ public class Output : MonoBehaviour {
         return "";
     }
 
-    public void deleteWord() {
-        for (int i = inputText.Length - 2; i >= 0; i--) {
-            if (inputText[i] == ' ') {
-                inputText = inputText.Substring(0, i + 1);
-                return;
+    public void delete() {
+        if (inputText.Length - 1 >= 0 && inputText[inputText.Length - 1] == ' ') {
+            //delete a word
+            for (int i = inputText.Length - 2; i >= 0; i--) {
+                if (inputText[i] == ' ') {
+                    inputText = inputText.Substring(0, i + 1);
+                    return;
+                }
+            }
+            inputText = "";
+        } else {
+            //delete a letter
+            if (inputText.Length - 1 >= 0) {
+                inputText = inputText.Substring(0, inputText.Length - 1);
             }
         }
-        inputText = "";
     }
 
     public void addWord(string str) {
