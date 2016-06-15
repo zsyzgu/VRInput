@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 
 public class Server : MonoBehaviour {
     static private Server server;
@@ -12,6 +13,7 @@ public class Server : MonoBehaviour {
     public Text infoText;
     private int port = 1234;
     private string IP = "";
+    public StreamWriter sw;
 
     public bool tapOn = true;
     public bool bigKeyboard = true;
@@ -20,6 +22,18 @@ public class Server : MonoBehaviour {
     void Start() {
         server = this;
         IP = getIP();
+
+        FileInfo file = new FileInfo(Application.persistentDataPath + "\\" + "log.txt");
+        if (file.Exists) {
+            Debug.Log("Y");
+        } else {
+            Debug.Log("N");
+        }
+        sw = file.CreateText();
+    }
+
+    void OnDestroy() {
+        sw.Close();
     }
 
     string getIP() {
@@ -90,6 +104,7 @@ public class Server : MonoBehaviour {
 
     static public void log(string message) {
         server.sendMessage(Time.time + " " + message);
+        server.sw.WriteLine(message);
     }
 
     static public bool isTapOn() {
