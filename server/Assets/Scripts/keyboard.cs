@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Keyboard : MonoBehaviour {
     public RectTransform cursor;
     public GameObject outputScreen;
-    private const float TLE_TIME = 1f;
+    private const float DWELL_TIME = 1f;
 
     private Output output;
     private RectTransform hoverKey = null;
@@ -13,8 +13,8 @@ public class Keyboard : MonoBehaviour {
     private ArrayList wordList = new ArrayList();
     private int selectNum = 0;
     private int page = 0;
-    private float tleTime;
-    private bool tle = false;
+    private float dwellTimestamp;
+    private bool dwellTimeout = false;
 
     // Use this for initialization
     void Start () {
@@ -25,7 +25,44 @@ public class Keyboard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        updateKeysColor();
+        updateHover();
+        updateDwell();
+
+        foreach (RectTransform key in transform) {
+            if (key.tag == "page") {
+                if (key.name == "lastPage" && canLastPage() == false) {
+                    setKeyColor(key, Color.gray);
+                }
+                else if (key.name == "nextPage" && canNextPage() == false) {
+                    setKeyColor(key, Color.gray);
+                }
+                else {
+                    setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
+                }
+            }
+            else if (key.tag == "control") {
+                if (key == hoverKey) {
+                    setKeyColor(key, Color.yellow);
+                }
+                else {
+                    if (key.name == "tapOn") {
+                        setKeyColor(key, Server.isTapOn() ? Color.white : Color.gray);
+                    }
+                    else if (key.name == "bigKeyboard") {
+                        setKeyColor(key, Server.isBigKeyboard() ? Color.white : Color.gray);
+                    }
+                    else if (key.name == "fastCursor") {
+                        setKeyColor(key, Server.isFastCursor() ? Color.white : Color.gray);
+                    }
+                    else if (key.name == "singlePoint") {
+                        setKeyColor(key, Server.isSinglePoint() ? Color.white : Color.gray);
+                    }
+                }
+            }
+            else {
+                setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
+            }
+        }
     }
 
     void calnSelectNum() {
@@ -44,67 +81,40 @@ public class Keyboard : MonoBehaviour {
         }
     }
 
-    void updateTle() {
-        if (Server.isSinglePoint() && Server.isTapOn() == false && hoverKey != null) {
-            tle = false;
-            float deltaTime = Time.time - tleTime;
-            if (deltaTime >= TLE_TIME / 2) {
-                cursor.Rotate(0f, 0f, (Time.deltaTime / (TLE_TIME / 2)) * 360f);
-                if (deltaTime >= TLE_TIME) {
-                    tleTime = Time.time;
-                    cursor.rotation = new Quaternion();
-                    tle = true;
-                    confirm();
-                }
-            }
-        }
-    }
-
     void updateHover() {
         foreach (RectTransform key in transform) {
             if (cursorInsideKey(key)) {
                 if (hoverKey != key) {
                     hoverKey = key;
-                    tleTime = Time.time;
-                    cursor.rotation = new Quaternion();
+                    resetDwell();
                 }
                 return;
             }
         }
         hoverKey = null;
+        resetDwell();
     }
 
-    void updateKeysColor() {
-        updateHover();
-        updateTle();
-
-        foreach (RectTransform key in transform) {
-            if (key.tag == "page") {
-                if (key.name == "lastPage" && canLastPage() == false) {
-                    setKeyColor(key, Color.gray);
-                } else if (key.name == "nextPage" && canNextPage() == false) {
-                    setKeyColor(key, Color.gray);
-                } else {
-                    setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
+    void updateDwell() {
+        if (!Server.isTapOn() && Server.isSinglePoint()) {
+            dwellTimeout = false;
+            float deltaTime = Time.time - dwellTimestamp;
+            if (deltaTime >= DWELL_TIME / 2) {
+                cursor.Rotate(0f, 0f, (Time.deltaTime / (DWELL_TIME / 2)) * 360f);
+                if (deltaTime >= DWELL_TIME) {
+                    resetDwell();
+                    dwellTimeout = true;
+                    confirm();
                 }
-            } else if (key.tag == "control") {
-                if (key == hoverKey) {
-                    setKeyColor(key, Color.yellow);
-                } else {
-                    if (key.name == "tapOn") {
-                        setKeyColor(key, Server.isTapOn() ? Color.white : Color.gray);
-                    } else if (key.name == "bigKeyboard") {
-                        setKeyColor(key, Server.isBigKeyboard() ? Color.white : Color.gray);
-                    } else if (key.name == "fastCursor") {
-                        setKeyColor(key, Server.isFastCursor() ? Color.white : Color.gray);
-                    } else if (key.name == "singlePoint") {
-                        setKeyColor(key, Server.isSinglePoint() ? Color.white : Color.gray);
-                    }
-                }
-            } else {
-                setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
             }
+        } else {
+            resetDwell();
         }
+    }
+    
+    void resetDwell() {
+        dwellTimestamp = Time.time;
+        cursor.rotation = new Quaternion();
     }
 
     bool canLastPage() {
@@ -121,7 +131,7 @@ public class Keyboard : MonoBehaviour {
         key.GetComponent<Button>().colors = colors;
     }
     
-    bool allPosInsideHoverKey() {
+    /*bool allPosInsideHoverKey() {
         if (hoverKey == null) {
             return false;
         }
@@ -138,7 +148,7 @@ public class Keyboard : MonoBehaviour {
             if (pos.y < y - h / 2 || pos.y > y + h / 2) return false;
         }
         return true;
-    }
+    }*/
 
     bool cursorInsideKey(RectTransform key) {
         if (cursor.localPosition.x < key.localPosition.x - key.rect.width * key.localScale.x / 2) return false;
@@ -216,13 +226,15 @@ public class Keyboard : MonoBehaviour {
             dictionary.clearPos();
         } else {
             //hover on letter or symbol
-            if ((Server.isTapOn() && Server.isSinglePoint() && allPosInsideHoverKey()) || tle) {
-                char ch = hoverKey.GetComponentInChildren<Text>().text[0];
-                if (char.IsLetter(ch)) {
-                    ch = char.ToLower(ch);
+            if (Server.isSinglePoint() && (Server.isTapOn() || (!Server.isTapOn() && dwellTimeout))) {
+                if (hoverKey != null) {
+                    char ch = hoverKey.GetComponentInChildren<Text>().text[0];
+                    if (char.IsLetter(ch)) {
+                        ch = char.ToLower(ch);
+                    }
+                    output.addChar(ch);
+                    Server.log("singlePoint " + ch);
                 }
-                output.addChar(ch);
-                Server.log("singlePoint " + ch);
             } else {
                 wordList = dictionary.getWordList();
 
