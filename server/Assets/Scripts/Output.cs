@@ -6,6 +6,8 @@ public class Output : MonoBehaviour {
     public GameObject keyboard;
     public Text phrasesField;
     public Text inputField;
+    public AudioClip wordSound;
+    public AudioClip phraseSound;
 
     private string inputText = "";
     private Dictionary dictionary;
@@ -28,8 +30,7 @@ public class Output : MonoBehaviour {
 	
 	void Update () {
 	    if (phrasesField.text == "") {
-            Server.log("phraseUpdate");
-            phrasesField.text = getPhrase();
+            updatePhrase();
         }
         if (Time.fixedTime - Mathf.Floor(Time.fixedTime) < 0.5f) {
             inputField.text = inputText + "_";
@@ -63,36 +64,52 @@ public class Output : MonoBehaviour {
     public void delete() {
         if (inputText.Length - 1 >= 0 && inputText[inputText.Length - 1] == ' ') {
             //delete a word
+            bool empty = true;
+
             for (int i = inputText.Length - 2; i >= 0; i--) {
                 if (inputText[i] == ' ') {
                     inputText = inputText.Substring(0, i + 1);
-                    return;
+                    empty = false;
+                    break;
                 }
             }
-            inputText = "";
+
+            if (empty) {
+                inputText = "";
+            }
         } else {
             //delete a letter
             if (inputText.Length - 1 >= 0) {
                 inputText = inputText.Substring(0, inputText.Length - 1);
             }
         }
+
+        GetComponent<AudioSource>().PlayOneShot(wordSound);
     }
 
     public void addWord(string str) {
         inputText += str + " ";
-        
+        GetComponent<AudioSource>().PlayOneShot(wordSound);
+
         if (inputText.Substring(0, inputText.Length - 1) == phrasesField.text) {
-            phrasesField.text = getPhrase();
-            inputText = "";
+            updatePhrase();
         }
     }
 
     public void addChar(char ch) {
         inputText += ch;
+        GetComponent<AudioSource>().PlayOneShot(wordSound);
 
         if (inputText == phrasesField.text) {
-            phrasesField.text = getPhrase();
-            inputText = "";
+            updatePhrase();
         }
+    }
+
+    public void updatePhrase() {
+        phrasesField.text = getPhrase();
+        GetComponent<AudioSource>().PlayOneShot(phraseSound);
+
+        inputText = "";
+        Server.log("phraseUpdated");
     }
 }
