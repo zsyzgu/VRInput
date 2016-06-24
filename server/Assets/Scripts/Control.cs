@@ -51,7 +51,7 @@ public class Control : MonoBehaviour {
     }
 
     void rotateHead() {
-        if (Application.platform == RuntimePlatform.WindowsEditor) {
+        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) {
             //trackingSpace.transform.rotation (ON_PC) == InputTracking.GetLocalRotation(VRNode.CenterEye) (ON_VR)
             if (Input.GetKeyUp(KeyCode.H)) {
                 mouseHidden ^= true;
@@ -133,12 +133,11 @@ public class Control : MonoBehaviour {
 
         if (frameCnt-- == 0) {
             frameCnt = FRAME_PER_SAMPLE;
-
+            
             //Draw line
             tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
             //Record gesture input
             keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
-
         }
     }
 

@@ -7,7 +7,7 @@ using System.IO;
 
 public class Server : MonoBehaviour {
     static private Server server;
-    static private float[] keyboardSize = {0.25f, 0.5f};
+    static private float[] keyboardSize = { 0.25f, 0.5f };
 
     public Canvas canvas;
     public Text infoText;
@@ -18,17 +18,13 @@ public class Server : MonoBehaviour {
     public bool tapOn = true;
     public bool bigKeyboard = true;
     public bool fastCursor = false;
+    public bool singlePoint = false;
 
     void Start() {
         server = this;
         IP = getIP();
 
         FileInfo file = new FileInfo(Application.persistentDataPath + "\\" + "log.txt");
-        if (file.Exists) {
-            Debug.Log("Y");
-        } else {
-            Debug.Log("N");
-        }
         sw = file.CreateText();
     }
 
@@ -86,7 +82,7 @@ public class Server : MonoBehaviour {
         info += "IP : " + IP + "\n";
         RectTransform rect = canvas.GetComponent<RectTransform>();
         info += "SIZE : " + rect.localScale.x + "\n";
-        info += "TAP : " + (tapOn ? "ON" : "OFF"); 
+        info += "TAP : " + (tapOn ? "ON" : "OFF");
 
         infoText.text = info;
     }
@@ -143,6 +139,14 @@ public class Server : MonoBehaviour {
         } else {
             log("fastCursor off");
         }
+    }
+
+    static public bool isSinglePoint() {
+        return server.singlePoint;
+    }
+
+    static public void setSinglePoint() {
+        server.singlePoint ^= true;
     }
 
     void sendMessage(string message) {

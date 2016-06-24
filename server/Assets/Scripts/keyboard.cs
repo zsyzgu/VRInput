@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class Keyboard : MonoBehaviour {
     public RectTransform cursor;
     public GameObject outputScreen;
+    private const float TLE_TIME = 1f;
 
     private Output output;
     private RectTransform hoverKey = null;
@@ -12,6 +13,8 @@ public class Keyboard : MonoBehaviour {
     private ArrayList wordList = new ArrayList();
     private int selectNum = 0;
     private int page = 0;
+    private float tleTime;
+    private bool tle = false;
 
     // Use this for initialization
     void Start () {
@@ -41,17 +44,40 @@ public class Keyboard : MonoBehaviour {
         }
     }
 
-    void updateHover() {
-        hoverKey = null;
-        foreach (RectTransform key in transform) {
-            if (cursorInsideKey(key)) {
-                hoverKey = key;
+    void updateTle() {
+        if (Server.isSinglePoint() && Server.isTapOn() == false && hoverKey != null) {
+            tle = false;
+            float deltaTime = Time.time - tleTime;
+            if (deltaTime >= TLE_TIME / 2) {
+                cursor.Rotate(0f, 0f, (Time.deltaTime / (TLE_TIME / 2)) * 360f);
+                if (deltaTime >= TLE_TIME) {
+                    tleTime = Time.time;
+                    cursor.rotation = new Quaternion();
+                    tle = true;
+                    confirm();
+                }
             }
         }
     }
 
+    void updateHover() {
+        foreach (RectTransform key in transform) {
+            if (cursorInsideKey(key)) {
+                if (hoverKey != key) {
+                    hoverKey = key;
+                    tleTime = Time.time;
+                    cursor.rotation = new Quaternion();
+                }
+                return;
+            }
+        }
+        hoverKey = null;
+    }
+
     void updateKeysColor() {
         updateHover();
+        updateTle();
+
         foreach (RectTransform key in transform) {
             if (key.tag == "page") {
                 if (key.name == "lastPage" && canLastPage() == false) {
@@ -71,6 +97,8 @@ public class Keyboard : MonoBehaviour {
                         setKeyColor(key, Server.isBigKeyboard() ? Color.white : Color.gray);
                     } else if (key.name == "fastCursor") {
                         setKeyColor(key, Server.isFastCursor() ? Color.white : Color.gray);
+                    } else if (key.name == "singlePoint") {
+                        setKeyColor(key, Server.isSinglePoint() ? Color.white : Color.gray);
                     }
                 }
             } else {
@@ -182,18 +210,19 @@ public class Keyboard : MonoBehaviour {
                 Server.setBigKeyboard();
             } else if (hoverKey.name == "fastCursor") {
                 Server.setFastCursor();
+            } else if (hoverKey.name == "singlePoint") {
+                Server.setSinglePoint();
             }
             dictionary.clearPos();
         } else {
             //hover on letter or symbol
-            //TODO: what if !isTapOn
-            if (Server.isTapOn() && allPosInsideHoverKey()) {
+            if ((Server.isTapOn() && Server.isSinglePoint() && allPosInsideHoverKey()) || tle) {
                 char ch = hoverKey.GetComponentInChildren<Text>().text[0];
                 if (char.IsLetter(ch)) {
                     ch = char.ToLower(ch);
                 }
                 output.addChar(ch);
-                Server.log("singlePoint" + ch);
+                Server.log("singlePoint " + ch);
             } else {
                 wordList = dictionary.getWordList();
 
