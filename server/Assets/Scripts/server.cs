@@ -7,7 +7,8 @@ using System.IO;
 
 public class Server : MonoBehaviour {
     static private Server server;
-    static private float[] keyboardSize = { 0.25f, 0.5f };
+    static private float[] keyboardSize = {0.5f, 1.0f};
+    static private float[] cursorSpeed = {1.0f, 1.5f};
 
     public Canvas canvas;
     public Text infoText;
@@ -81,8 +82,8 @@ public class Server : MonoBehaviour {
         string info = "";
         info += "IP : " + IP + "\n";
         RectTransform rect = canvas.GetComponent<RectTransform>();
-        info += "SIZE : " + rect.localScale.x + "\n";
-        info += "TAP : " + (tapOn ? "ON" : "OFF");
+        info += "size : " + rect.localScale.x + "\n";
+        info += "speed : " + cursorSpeed[fastCursor ? 1 : 0];
 
         infoText.text = info;
     }

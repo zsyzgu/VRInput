@@ -48,10 +48,10 @@ public class Keyboard : MonoBehaviour {
                     if (key.name == "tapOn") {
                         setKeyColor(key, Server.isTapOn() ? Color.white : Color.gray);
                     }
-                    else if (key.name == "bigKeyboard") {
+                    else if (key.name == "zoonIn" || key.name == "zoonOut") {
                         setKeyColor(key, Server.isBigKeyboard() ? Color.white : Color.gray);
                     }
-                    else if (key.name == "fastCursor") {
+                    else if (key.name == "fastCursor" || key.name == "slowCursor") {
                         setKeyColor(key, Server.isFastCursor() ? Color.white : Color.gray);
                     }
                     else if (key.name == "singlePoint") {
@@ -216,9 +216,9 @@ public class Keyboard : MonoBehaviour {
         } else if (hoverKey != null && hoverKey.tag == "control") {
             if (hoverKey.name == "tapOn") {
                 Server.setTapOn();
-            } else if (hoverKey.name == "bigKeyboard") {
+            } else if (hoverKey.name == "zoonIn" || hoverKey.name == "zoonOut") {
                 Server.setBigKeyboard();
-            } else if (hoverKey.name == "fastCursor") {
+            } else if (hoverKey.name == "fastCursor" || hoverKey.name == "slowCursor") {
                 Server.setFastCursor();
             } else if (hoverKey.name == "singlePoint") {
                 Server.setSinglePoint();
