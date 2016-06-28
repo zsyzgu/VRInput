@@ -32,34 +32,31 @@ public class Keyboard : MonoBehaviour {
             if (key.tag == "page") {
                 if (key.name == "lastPage" && canLastPage() == false) {
                     setKeyColor(key, Color.gray);
-                }
-                else if (key.name == "nextPage" && canNextPage() == false) {
+                } else if (key.name == "nextPage" && canNextPage() == false) {
                     setKeyColor(key, Color.gray);
-                }
-                else {
+                } else {
                     setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
                 }
             }
             else if (key.tag == "control") {
                 if (key == hoverKey) {
                     setKeyColor(key, Color.yellow);
-                }
-                else {
+                } else {
                     if (key.name == "tapOn") {
                         setKeyColor(key, Server.isTapOn() ? Color.white : Color.gray);
-                    }
-                    else if (key.name == "zoonIn" || key.name == "zoonOut") {
-                        setKeyColor(key, Server.isBigKeyboard() ? Color.white : Color.gray);
-                    }
-                    else if (key.name == "fastCursor" || key.name == "slowCursor") {
-                        setKeyColor(key, Server.isFastCursor() ? Color.white : Color.gray);
-                    }
-                    else if (key.name == "singlePoint") {
+                    } else if (key.name == "zoonIn") {
+                        setKeyColor(key, Server.canZoomIn() ? Color.white : Color.gray);
+                    } else if (key.name == "zoonOut") {
+                        setKeyColor(key, Server.canZoomOut() ? Color.white : Color.gray);
+                    } else if (key.name == "speedUp") {
+                        setKeyColor(key, Server.canSpeedUp() ? Color.white : Color.gray);
+                    } else if (key.name == "speedDown") {
+                        setKeyColor(key, Server.canSpeedDown() ? Color.white : Color.gray);
+                    } else if (key.name == "singlePoint") {
                         setKeyColor(key, Server.isSinglePoint() ? Color.white : Color.gray);
                     }
                 }
-            }
-            else {
+            } else {
                 setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
             }
         }
@@ -216,10 +213,14 @@ public class Keyboard : MonoBehaviour {
         } else if (hoverKey != null && hoverKey.tag == "control") {
             if (hoverKey.name == "tapOn") {
                 Server.setTapOn();
-            } else if (hoverKey.name == "zoonIn" || hoverKey.name == "zoonOut") {
-                Server.setBigKeyboard();
-            } else if (hoverKey.name == "fastCursor" || hoverKey.name == "slowCursor") {
-                Server.setFastCursor();
+            } else if (hoverKey.name == "zoonIn") {
+                Server.zoomIn();
+            } else if (hoverKey.name == "zoonOut") {
+                Server.zoomOut();
+            } else if (hoverKey.name == "speedUp") {
+                Server.speedUp();
+            } else if (hoverKey.name == "speedDown") {
+                Server.speedDown();
             } else if (hoverKey.name == "singlePoint") {
                 Server.setSinglePoint();
             }

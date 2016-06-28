@@ -35,15 +35,9 @@ public class Control : MonoBehaviour {
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo)) {
             Vector2 pos = (Vector2)(canvas.transform.worldToLocalMatrix * hitInfo.point);
-            if (Server.isFastCursor()) {
-                float x = pos.x / canvas.rect.width * 2f + 0.5f;
-                float y = pos.y / canvas.rect.height * 2f + 0.5f;
-                ret = new Vector2(x, y);
-            } else {
-                float x = pos.x / canvas.rect.width + 0.5f;
-                float y = pos.y / canvas.rect.height + 0.5f;
-                ret = new Vector2(x, y);
-            }
+            float x = pos.x / canvas.rect.width * Server.getSpeed() + 0.5f;
+            float y = pos.y / canvas.rect.height * Server.getSpeed() + 0.5f;
+            ret = new Vector2(x, y);
             return true;
         }
         ret = new Vector2();

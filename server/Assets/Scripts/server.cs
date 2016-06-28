@@ -7,8 +7,8 @@ using System.IO;
 
 public class Server : MonoBehaviour {
     static private Server server;
-    static private float[] keyboardSize = {0.5f, 1.0f};
-    static private float[] cursorSpeed = {1.0f, 1.5f};
+    static private float[] keyboardSize = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
+    static private float[] cursorSpeed = {1.0f, 1.2f, 1.4f, 1.6f, 1.8f, 2.0f};
 
     public Canvas canvas;
     public Text infoText;
@@ -17,9 +17,10 @@ public class Server : MonoBehaviour {
     public StreamWriter sw;
 
     public bool tapOn = true;
-    public bool bigKeyboard = true;
     public bool fastCursor = false;
     public bool singlePoint = false;
+    public int keyboardSizeIndex = 3;
+    public int cursorSpeedIndex = 0;
 
     void Start() {
         server = this;
@@ -76,6 +77,12 @@ public class Server : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Alpha4)) {
             sendMessage("4");
         }
+        if (Input.GetKeyUp(KeyCode.Alpha5)) {
+            sendMessage("5");
+        }
+        if (Input.GetKeyUp(KeyCode.Alpha6)) {
+            sendMessage("6");
+        }
     }
 
     void outputInfo() {
@@ -116,32 +123,62 @@ public class Server : MonoBehaviour {
             log("tap off");
         }
     }
-
-    static public bool isBigKeyboard() {
-        return server.bigKeyboard;
-    }
-
-    static public void setBigKeyboard() {
-        server.bigKeyboard ^= true;
-        RectTransform rect = server.canvas.GetComponent<RectTransform>();
-        float size = keyboardSize[(server.bigKeyboard) ? 1 : 0];
+    
+    private void setSize() {
+        RectTransform rect = canvas.GetComponent<RectTransform>();
+        float size = keyboardSize[keyboardSizeIndex];
         rect.localScale = new Vector3(size, size, size);
         log("size " + size);
     }
 
-    static public bool isFastCursor() {
-        return server.fastCursor;
+    static public bool canZoomIn() {
+        return server.keyboardSizeIndex + 1 < keyboardSize.Length;
     }
 
-    static public void setFastCursor() {
-        server.fastCursor ^= true;
-        if (server.fastCursor) {
-            log("fastCursor on");
-        } else {
-            log("fastCursor off");
+    static public void zoomIn() {
+        if (canZoomIn()) {
+            server.keyboardSizeIndex++;
+            server.setSize();
         }
     }
 
+    static public bool canZoomOut() {
+        return server.keyboardSizeIndex - 1 >= 0;
+    }
+
+    static public void zoomOut() {
+        if (canZoomOut()) {
+            server.keyboardSizeIndex--;
+            server.setSize();
+        }
+    }
+
+    static public float getSpeed() {
+        return cursorSpeed[server.cursorSpeedIndex];
+    }
+
+    static public bool canSpeedUp() {
+        return server.cursorSpeedIndex + 1 < cursorSpeed.Length;
+    }
+
+    static public void speedUp() {
+        if (canSpeedUp()) {
+            server.cursorSpeedIndex++;
+            log("speed" + getSpeed());
+        }
+    }
+
+    static public bool canSpeedDown() {
+        return server.cursorSpeedIndex - 1 >= 0;
+    }
+
+    static public void speedDown() {
+        if (canSpeedDown()) {
+            server.cursorSpeedIndex--;
+            log("speed" + getSpeed());
+        }
+    }
+    
     static public bool isSinglePoint() {
         return server.singlePoint;
     }
@@ -159,10 +196,19 @@ public class Server : MonoBehaviour {
             setTapOn();
         }
         if (message == "2") {
-            setBigKeyboard();
+            setSinglePoint();
         }
         if (message == "3") {
-            setFastCursor();
+            zoomIn();
+        }
+        if (message == "4") {
+            zoomOut();
+        }
+        if (message == "5") {
+            speedUp();
+        }
+        if (message == "6") {
+            speedDown();
         }
     }
 
