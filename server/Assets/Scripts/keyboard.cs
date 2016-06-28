@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Keyboard : MonoBehaviour {
     public RectTransform cursor;
     public GameObject outputScreen;
-    private const float DWELL_TIME = 1f;
+    private const float DWELL_TIME = 0.4f;
 
     private Output output;
     private RectTransform hoverKey = null;
