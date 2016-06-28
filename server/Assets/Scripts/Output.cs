@@ -9,6 +9,7 @@ public class Output : MonoBehaviour {
     public AudioClip wordSound;
     public AudioClip phraseSound;
 
+    private string phrasesText = "";
     private string inputText = "";
     private Dictionary dictionary;
     private System.Random random = new System.Random();
@@ -29,15 +30,33 @@ public class Output : MonoBehaviour {
     }
 	
 	void Update () {
-	    if (phrasesField.text == "") {
+	    if (phrasesText == "") {
             updatePhrase();
         }
+        updateOutput();
+	}
+
+    void updateOutput() {
         if (Time.fixedTime - Mathf.Floor(Time.fixedTime) < 0.5f) {
             inputField.text = inputText + "_";
-        } else {
+        }
+        else {
             inputField.text = inputText;
         }
-	}
+
+        phrasesField.text = "";
+        for (int i = 0; i < phrasesText.Length; i++) {
+            if (i < inputText.Length) {
+                if (phrasesText[i] == inputText[i]) {
+                    phrasesField.text += "<color=green>" + phrasesText[i] + "</color>";
+                } else {
+                    phrasesField.text += "<color=red>" + phrasesText[i] + "</color>";
+                }
+            } else {
+                phrasesField.text += phrasesText[i];
+            }
+        }
+    }
 
     string getPhrase() {
         int cnt = 0;
@@ -91,7 +110,7 @@ public class Output : MonoBehaviour {
         inputText += str + " ";
         GetComponent<AudioSource>().PlayOneShot(wordSound);
 
-        if (inputText.Substring(0, inputText.Length - 1) == phrasesField.text) {
+        if (inputText.Substring(0, inputText.Length - 1) == phrasesText) {
             updatePhrase();
         }
     }
@@ -100,13 +119,13 @@ public class Output : MonoBehaviour {
         inputText += ch;
         GetComponent<AudioSource>().PlayOneShot(wordSound);
 
-        if (inputText == phrasesField.text) {
+        if (inputText == phrasesText) {
             updatePhrase();
         }
     }
 
     public void updatePhrase() {
-        phrasesField.text = getPhrase();
+        phrasesText = getPhrase();
         GetComponent<AudioSource>().PlayOneShot(phraseSound);
 
         inputText = "";
