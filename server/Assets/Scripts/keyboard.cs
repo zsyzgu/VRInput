@@ -185,11 +185,22 @@ public class Keyboard : MonoBehaviour {
 
         if (hoverKey != null && hoverKey.tag == "delete") {
             Server.log("delete");
-            output.delete();
-            page = 0;
-            dictionary.clearPos();
-            wordList.Clear();
-            drawSelect();
+            if (Server.isTapOn() || Server.isSinglePoint()) {
+                output.delete();
+                page = 0;
+                dictionary.clearPos();
+                wordList.Clear();
+                drawSelect();
+            } else {
+                if (wordList.Count > 0) {
+                    page = 0;
+                    dictionary.clearPos();
+                    wordList.Clear();
+                    drawSelect();
+                } else {
+                    output.delete();
+                }
+            }
         } else if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
             string word = hoverKey.GetComponentInChildren<Text>().text;
             Server.log("select " + word);
@@ -199,7 +210,8 @@ public class Keyboard : MonoBehaviour {
             output.addWord(word);
             page = 0;
             dictionary.clearPos();
-            clearSelect();
+            wordList.Clear();
+            drawSelect();
         } else if (hoverKey != null && hoverKey.tag == "page") {
             if (hoverKey.name == "lastPage" && canLastPage()) {
                 Server.log("lastPage");
@@ -253,20 +265,23 @@ public class Keyboard : MonoBehaviour {
     void drawSelect() {
         foreach (RectTransform key in transform) {
             if (key.tag == "select") {
-                int rank = page * selectNum + (key.name[6] - '0');
+                int rank = page * selectNum + (Server.isTapOn() ? 1 : 0); //don't show default word
+                float dist = Vector2.Distance(key.localPosition, cursor.localPosition);
+                foreach (RectTransform otherKey in transform) {
+                    if (otherKey.tag == "select" && otherKey != key) {
+                        float otherDist = Vector2.Distance(otherKey.localPosition, cursor.localPosition);
+                        if (otherDist < dist) {
+                            rank++;
+                        }
+                    }
+                }
+
+                rank += page * selectNum;
                 if (rank < wordList.Count) {
                     key.GetComponentInChildren<Text>().text = ((Dictionary.Word)wordList[rank]).word;
                 } else {
                     key.GetComponentInChildren<Text>().text = "";
                 }
-            }
-        }
-    }
-
-    void clearSelect() {
-        foreach (RectTransform key in transform) {
-            if (key.tag == "select") {
-                key.GetComponentInChildren<Text>().text = "";
             }
         }
     }
