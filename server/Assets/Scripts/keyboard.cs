@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class Keyboard : MonoBehaviour {
     private const float DWELL_TIME = 0.4f;
+    private const float DWELL_MOVE_SPEED = 5f;
     public Sprite cursorImage;
     public Sprite waitingCircleImage;
     public RectTransform cursor;
@@ -17,6 +18,7 @@ public class Keyboard : MonoBehaviour {
     private int page = 0;
     private float dwellTimestamp;
     private bool dwellTimeout = false;
+    private Vector2 lastCursorPos;
 
     // Use this for initialization
     void Start () {
@@ -100,24 +102,27 @@ public class Keyboard : MonoBehaviour {
             if (cursorInsideKey(key)) {
                 if (hoverKey != key) {
                     hoverKey = key;
-                    resetDwell();
                 }
                 return;
             }
         }
         hoverKey = null;
-        resetDwell();
     }
 
     void updateDwell() {
+        if (Vector2.Distance(lastCursorPos, cursor.localPosition) / Time.deltaTime > DWELL_MOVE_SPEED) {
+            dwellTimestamp = Time.time;
+        }
+        lastCursorPos = cursor.localPosition;
+
         if (Server.getMethod() == Server.Method.dwell) {
             dwellTimeout = false;
             float deltaTime = Time.time - dwellTimestamp;
-            if (deltaTime >= DWELL_TIME / 2) {
+            if (deltaTime >= DWELL_TIME / 8) {
                 cursor.GetComponent<Image>().sprite = waitingCircleImage;
-                cursor.GetComponent<Image>().fillAmount = deltaTime / (DWELL_TIME / 2) - 1f;
+                cursor.GetComponent<Image>().fillAmount = deltaTime / DWELL_TIME;
                 if (deltaTime >= DWELL_TIME) {
-                    resetDwell();
+                    dwellTimestamp = Time.time;
                     dwellTimeout = true;
                     confirm();
                 }
@@ -128,13 +133,8 @@ public class Keyboard : MonoBehaviour {
         } else {
             cursor.GetComponent<Image>().sprite = cursorImage;
             cursor.GetComponent<Image>().fillAmount = 1f;
-            resetDwell();
+            dwellTimestamp = Time.time;
         }
-    }
-    
-    void resetDwell() {
-        dwellTimestamp = Time.time;
-        cursor.rotation = new Quaternion();
     }
 
     bool canLastPage() {

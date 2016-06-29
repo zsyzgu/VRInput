@@ -75,19 +75,11 @@ public class Control : MonoBehaviour {
     void mainControl() {
         Keyboard board = keyboard.GetComponent<Keyboard>();
 
-        if (Server.getMethod() == Server.Method.normal || Server.getMethod() == Server.Method.baseline) {
-            if (Input.GetButton("Fire1")) {
-                headWriting();
-            } else {
-                moveCursor();
-                if (tracking.GetComponent<Tracking>().stopDrawing()) {
-                    board.confirm();
-                }
-            }
-        } else {
+        if (Server.getMethod() == Server.Method.headOnly) {
             if (drawing && board.cursorInsideKeyboard()) {
                 headWriting();
-            } else {
+            }
+            else {
                 //GESTURE END
                 drawing = false;
                 moveCursor();
@@ -111,6 +103,15 @@ public class Control : MonoBehaviour {
                 if (board.cursorInsideCmdKeys()) {
                     //SELECTING END
                     selecting = false;
+                    board.confirm();
+                }
+            }
+        } else {
+            if (Input.GetButton("Fire1")) {
+                headWriting();
+            } else {
+                moveCursor();
+                if (tracking.GetComponent<Tracking>().stopDrawing()) {
                     board.confirm();
                 }
             }
