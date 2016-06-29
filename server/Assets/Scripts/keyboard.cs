@@ -44,18 +44,33 @@ public class Keyboard : MonoBehaviour {
                 if (key == hoverKey) {
                     setKeyColor(key, Color.yellow);
                 } else {
-                    if (key.name == "tapOn") {
-                        setKeyColor(key, Server.isTapOn() ? Color.white : Color.gray);
-                    } else if (key.name == "zoonIn") {
-                        setKeyColor(key, Server.canZoomIn() ? Color.white : Color.gray);
-                    } else if (key.name == "zoonOut") {
-                        setKeyColor(key, Server.canZoomOut() ? Color.white : Color.gray);
-                    } else if (key.name == "speedUp") {
-                        setKeyColor(key, Server.canSpeedUp() ? Color.white : Color.gray);
-                    } else if (key.name == "speedDown") {
-                        setKeyColor(key, Server.canSpeedDown() ? Color.white : Color.gray);
-                    } else if (key.name == "singlePoint") {
-                        setKeyColor(key, Server.isSinglePoint() ? Color.white : Color.gray);
+                    switch (key.name) {
+                        case "normal":
+                            setKeyColor(key, Server.getMethod() == Server.Method.normal ? Color.white : Color.gray);
+                            break;
+                        case "baseline":
+                            setKeyColor(key, Server.getMethod() == Server.Method.baseline ? Color.white : Color.gray);
+                            break;
+                        case "headOnly":
+                            setKeyColor(key, Server.getMethod() == Server.Method.headOnly ? Color.white : Color.gray);
+                            break;
+                        case "dwell":
+                            setKeyColor(key, Server.getMethod() == Server.Method.dwell ? Color.white : Color.gray);
+                            break;
+                        case "zoonIn":
+                            setKeyColor(key, Server.canZoomIn() ? Color.white : Color.gray);
+                            break;
+                        case "zoonOut":
+                            setKeyColor(key, Server.canZoomOut() ? Color.white : Color.gray);
+                            break;
+                        case "speedUp":
+                            setKeyColor(key, Server.canSpeedUp() ? Color.white : Color.gray);
+                            break;
+                        case "speedDown":
+                            setKeyColor(key, Server.canSpeedDown() ? Color.white : Color.gray);
+                            break;
+                        default:
+                            break;
                     }
                 }
             } else {
@@ -95,7 +110,7 @@ public class Keyboard : MonoBehaviour {
     }
 
     void updateDwell() {
-        if (!Server.isTapOn() && Server.isSinglePoint()) {
+        if (Server.getMethod() == Server.Method.dwell) {
             dwellTimeout = false;
             float deltaTime = Time.time - dwellTimestamp;
             if (deltaTime >= DWELL_TIME / 2) {
@@ -135,25 +150,6 @@ public class Keyboard : MonoBehaviour {
         colors.normalColor = color;
         key.GetComponent<Button>().colors = colors;
     }
-    
-    /*bool allPosInsideHoverKey() {
-        if (hoverKey == null) {
-            return false;
-        }
-        RectTransform canvas = transform.parent.GetComponent<RectTransform>();
-        float x = hoverKey.localPosition.x / canvas.rect.width + 0.5f;
-        float y = hoverKey.localPosition.y / canvas.rect.height + 0.5f;
-        float w = hoverKey.rect.width * hoverKey.localScale.x / canvas.rect.width;
-        float h = hoverKey.rect.height * hoverKey.localScale.y / canvas.rect.height;
-
-        ArrayList posList = GetComponent<Dictionary>().getPosList();
-        for (int i = 0; i < posList.Count; i++) {
-            Vector2 pos = (Vector2)posList[i];
-            if (pos.x < x - w / 2 || pos.x > x + w / 2) return false;
-            if (pos.y < y - h / 2 || pos.y > y + h / 2) return false;
-        }
-        return true;
-    }*/
 
     bool cursorInsideKey(RectTransform key) {
         if (cursor.localPosition.x < key.localPosition.x - key.rect.width * key.localScale.x / 2) return false;
@@ -193,33 +189,26 @@ public class Keyboard : MonoBehaviour {
 
         if (hoverKey != null && hoverKey.tag == "delete") {
             Server.log("delete");
-            if (Server.isTapOn() || Server.isSinglePoint()) {
-                output.delete();
-                page = 0;
-                dictionary.clearPos();
-                wordList.Clear();
-                drawSelect();
-            } else {
-                if (wordList.Count > 0) {
-                    page = 0;
-                    dictionary.clearPos();
-                    wordList.Clear();
-                    drawSelect();
-                } else {
-                    output.delete();
-                }
-            }
-        } else if (hoverKey != null && hoverKey.tag == "select" && hoverKey.GetComponentInChildren<Text>().text != "") {
-            string word = hoverKey.GetComponentInChildren<Text>().text;
-            Server.log("select " + word);
-            if (Server.isTapOn()) {
+            if (Server.getMethod() != Server.Method.headOnly || wordList.Count == 0) {
                 output.delete();
             }
-            output.addWord(word);
             page = 0;
             dictionary.clearPos();
             wordList.Clear();
             drawSelect();
+        } else if (hoverKey != null && hoverKey.tag == "select") {
+            if (hoverKey.GetComponentInChildren<Text>().text != "") {
+                string word = hoverKey.GetComponentInChildren<Text>().text;
+                Server.log("select " + word);
+                if (Server.getMethod() == Server.Method.normal) {
+                    output.delete();
+                }
+                output.addWord(word);
+                page = 0;
+                wordList.Clear();
+                drawSelect();
+            }
+            dictionary.clearPos();
         } else if (hoverKey != null && hoverKey.tag == "page") {
             if (hoverKey.name == "lastPage" && canLastPage()) {
                 Server.log("lastPage");
@@ -231,23 +220,38 @@ public class Keyboard : MonoBehaviour {
             }
             drawSelect();
         } else if (hoverKey != null && hoverKey.tag == "control") {
-            if (hoverKey.name == "tapOn") {
-                Server.setTapOn();
-            } else if (hoverKey.name == "zoonIn") {
-                Server.zoomIn();
-            } else if (hoverKey.name == "zoonOut") {
-                Server.zoomOut();
-            } else if (hoverKey.name == "speedUp") {
-                Server.speedUp();
-            } else if (hoverKey.name == "speedDown") {
-                Server.speedDown();
-            } else if (hoverKey.name == "singlePoint") {
-                Server.setSinglePoint();
+            switch (hoverKey.name) {
+                case "normal":
+                    Server.setMethod(Server.Method.normal);
+                    break;
+                case "baseline":
+                    Server.setMethod(Server.Method.baseline);
+                    break;
+                case "headOnly":
+                    Server.setMethod(Server.Method.headOnly);
+                    break;
+                case "dwell":
+                    Server.setMethod(Server.Method.dwell);
+                    break;
+                case "zoonIn":
+                    Server.zoomIn();
+                    break;
+                case "zoonOut":
+                    Server.zoomOut();
+                    break;
+                case "speedUp":
+                    Server.speedUp();
+                    break;
+                case "speedDown":
+                    Server.speedDown();
+                    break;
+                default:
+                    break;
             }
             dictionary.clearPos();
         } else {
             //hover on letter or symbol
-            if (Server.isSinglePoint() && (Server.isTapOn() || (!Server.isTapOn() && dwellTimeout))) {
+            if (Server.getMethod() == Server.Method.baseline || (Server.getMethod() == Server.Method.dwell && dwellTimeout)) {
                 if (hoverKey != null) {
                     char ch = hoverKey.GetComponentInChildren<Text>().text[0];
                     if (char.IsLetter(ch)) {
@@ -260,7 +264,7 @@ public class Keyboard : MonoBehaviour {
                 wordList = dictionary.getWordList();
 
                 drawSelect();
-                if (Server.isTapOn()) {
+                if (Server.getMethod() == Server.Method.normal) {
                     //when tap is not on, user must select
                     string defaultWord = drawDefaultWord();
                     Server.log("endGesture " + defaultWord);
@@ -273,7 +277,7 @@ public class Keyboard : MonoBehaviour {
     void drawSelect() {
         foreach (RectTransform key in transform) {
             if (key.tag == "select") {
-                int rank = page * selectNum + (Server.isTapOn() ? 1 : 0); //don't show default word
+                int rank = page * selectNum + (Server.getMethod() == Server.Method.normal ? 1 : 0); //don't show default word
                 float dist = Vector2.Distance(key.localPosition, cursor.localPosition);
                 foreach (RectTransform otherKey in transform) {
                     if (otherKey.tag == "select" && otherKey != key) {

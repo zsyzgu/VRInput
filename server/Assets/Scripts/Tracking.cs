@@ -25,21 +25,13 @@ public class Tracking : MonoBehaviour {
         clearCanvas();
     }
 
-    void clearCanvas() {
+    public void clearCanvas() {
         rendererCnt = 0;
         lineRenderer.SetVertexCount(rendererCnt);
     }
 
-    public void keepDrawing() {
-        if (isDrawing == false) {
-            clearCanvas();
-        }
-        isDrawing = true;
-    }
 
     public void addPos(float x, float y) {
-        keepDrawing();
-
         RectTransform rect = GetComponentInParent<RectTransform>();
         float width = rect.rect.width * rect.localScale.x;
         float height = rect.rect.height * rect.localScale.y;
@@ -47,9 +39,14 @@ public class Tracking : MonoBehaviour {
         lineRenderer.SetPosition(rendererCnt - 1, new Vector3((x - 0.5f) * width, (y - 0.5f) * height, rect.transform.position.z - 0.01f));
     }
 
+    public void keepDrawing() {
+        isDrawing = true;
+    }
+
     public bool stopDrawing() {
         if (isDrawing) {
             isDrawing = false;
+            clearCanvas();
             return true;
         }
         return false;

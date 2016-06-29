@@ -75,7 +75,7 @@ public class Control : MonoBehaviour {
     void mainControl() {
         Keyboard board = keyboard.GetComponent<Keyboard>();
 
-        if (Server.isTapOn()) {
+        if (Server.getMethod() == Server.Method.normal || Server.getMethod() == Server.Method.baseline) {
             if (Input.GetButton("Fire1")) {
                 headWriting();
             } else {
@@ -128,10 +128,11 @@ public class Control : MonoBehaviour {
         if (frameCnt-- == 0) {
             frameCnt = FRAME_PER_SAMPLE;
             
-            if (Server.isSinglePoint()) {
+            if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
                 tracking.GetComponent<Tracking>().keepDrawing();
                 keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
             } else {
+                tracking.GetComponent<Tracking>().keepDrawing();
                 tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
                 keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
             }

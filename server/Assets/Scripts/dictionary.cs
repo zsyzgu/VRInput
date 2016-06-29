@@ -91,7 +91,7 @@ public class Dictionary : MonoBehaviour {
 
             Vector2 beginPos = calnLetterPos(str[0]);
             Vector2 endPos = calnLetterPos(str[str.Length - 1]);
-            if (Server.isTapOn() == false) {
+            if (Server.getMethod() == Server.Method.headOnly) {
                 beginPos = calnLetterPos('g');
                 endPos.y = endPosY;
             }
@@ -103,18 +103,18 @@ public class Dictionary : MonoBehaviour {
                 continue;
             }
 
-            if (Server.isTapOn()) {
-                for (int j = 0; j < str.Length; j++) {
-                    wordPosList.Add(calnLetterPos(str[j]));
-                }
-            } else {
+            if (Server.getMethod() == Server.Method.headOnly) {
                 wordPosList.Add(beginPos);
 
                 for (int j = 0; j < str.Length; j++) {
                     wordPosList.Add(calnLetterPos(str[j]));
                 }
-                
+
                 wordPosList.Add(endPos);
+            } else {
+                for (int j = 0; j < str.Length; j++) {
+                    wordPosList.Add(calnLetterPos(str[j]));
+                }
             }
 
             Word word = new Word();

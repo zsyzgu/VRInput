@@ -14,10 +14,15 @@ public class Server : MonoBehaviour {
     public Text infoText;
     private int port = 1234;
     private string IP = "";
-    public StreamWriter sw;
-
-    private bool tapOn = true;
-    private bool singlePoint = false;
+    private StreamWriter sw;
+    
+    public enum Method {
+        normal = 0,
+        baseline = 1,
+        headOnly = 2,
+        dwell = 3
+    };
+    private Method method;
     private int keyboardSizeIndex = 3;
     private int cursorSpeedIndex = 0;
 
@@ -82,6 +87,12 @@ public class Server : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Alpha6)) {
             sendMessage("6");
         }
+        if (Input.GetKeyUp(KeyCode.Alpha7)) {
+            sendMessage("7");
+        }
+        if (Input.GetKeyUp(KeyCode.Alpha8)) {
+            sendMessage("8");
+        }
     }
 
     void outputInfo() {
@@ -109,19 +120,15 @@ public class Server : MonoBehaviour {
         server.sw.WriteLine(message);
     }
 
-    static public bool isTapOn() {
-        return server.tapOn;
+    static public void setMethod(Method method) {
+        log("method " + method.ToString());
+        server.method = method;
     }
 
-    static public void setTapOn() {
-        server.tapOn ^= true;
-        if (server.tapOn) {
-            log("tap on");
-        } else {
-            log("tap off");
-        }
+    static public Method getMethod() {
+        return server.method;
     }
-    
+
     private void setSize() {
         RectTransform rect = canvas.GetComponent<RectTransform>();
         float size = keyboardSize[keyboardSizeIndex];
@@ -176,14 +183,6 @@ public class Server : MonoBehaviour {
             log("speed" + getSpeed());
         }
     }
-    
-    static public bool isSinglePoint() {
-        return server.singlePoint;
-    }
-
-    static public void setSinglePoint() {
-        server.singlePoint ^= true;
-    }
 
     void sendMessage(string message) {
         GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
@@ -191,21 +190,27 @@ public class Server : MonoBehaviour {
 
     void recvMessage(string message) {
         if (message == "1") {
-            setTapOn();
+            setMethod(Method.normal);
         }
         if (message == "2") {
-            setSinglePoint();
+            setMethod(Method.baseline);
         }
         if (message == "3") {
-            zoomIn();
+            setMethod(Method.headOnly);
         }
         if (message == "4") {
-            zoomOut();
+            setMethod(Method.dwell);
         }
         if (message == "5") {
-            speedUp();
+            zoomIn();
         }
         if (message == "6") {
+            zoomOut();
+        }
+        if (message == "7") {
+            speedUp();
+        }
+        if (message == "8") {
             speedDown();
         }
     }
