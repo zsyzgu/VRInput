@@ -3,9 +3,11 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class Keyboard : MonoBehaviour {
+    private const float DWELL_TIME = 0.4f;
+    public Sprite cursorImage;
+    public Sprite waitingCircleImage;
     public RectTransform cursor;
     public GameObject outputScreen;
-    private const float DWELL_TIME = 0.4f;
 
     private Output output;
     private RectTransform hoverKey = null;
@@ -97,14 +99,20 @@ public class Keyboard : MonoBehaviour {
             dwellTimeout = false;
             float deltaTime = Time.time - dwellTimestamp;
             if (deltaTime >= DWELL_TIME / 2) {
-                cursor.Rotate(0f, 0f, (Time.deltaTime / (DWELL_TIME / 2)) * 360f);
+                cursor.GetComponent<Image>().sprite = waitingCircleImage;
+                cursor.GetComponent<Image>().fillAmount = deltaTime / (DWELL_TIME / 2) - 1f;
                 if (deltaTime >= DWELL_TIME) {
                     resetDwell();
                     dwellTimeout = true;
                     confirm();
                 }
+            } else {
+                cursor.GetComponent<Image>().sprite = cursorImage;
+                cursor.GetComponent<Image>().fillAmount = 1f;
             }
         } else {
+            cursor.GetComponent<Image>().sprite = cursorImage;
+            cursor.GetComponent<Image>().fillAmount = 1f;
             resetDwell();
         }
     }
