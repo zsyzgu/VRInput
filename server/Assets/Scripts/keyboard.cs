@@ -258,7 +258,7 @@ public class Keyboard : MonoBehaviour {
                         ch = char.ToLower(ch);
                     }
                     output.addChar(ch);
-                    Server.log("singlePoint " + ch);
+                    Server.log("letter " + ch);
                 }
             } else {
                 wordList = dictionary.getWordList();
@@ -267,7 +267,7 @@ public class Keyboard : MonoBehaviour {
                 if (Server.getMethod() == Server.Method.normal) {
                     //when tap is not on, user must select
                     string defaultWord = drawDefaultWord();
-                    Server.log("endGesture " + defaultWord);
+                    Server.log("gestureEnd " + defaultWord);
                 }
             }
             dictionary.clearPos();

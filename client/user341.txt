@@ -1,0 +1,13 @@
+3.058273 gestureStart
+3.087551 delete
+4.061855 gestureStart
+5.328764 gestureEnd you
+9.025464 gestureStart
+10.77973 gestureEnd must
+12.60204 gestureStart
+15.01877 gestureEnd make
+16.01625 gestureStart
+16.96629 gestureEnd an
+18.14938 gestureStart
+24.54657 phraseUpdateuser friendly interface
+24.54657 gestureEnd appointment

@@ -1,0 +1,2 @@
+3.744777 gestureStart
+3.771701 gestureEnd by

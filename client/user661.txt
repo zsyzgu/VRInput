@@ -1,0 +1,31 @@
+4.188936 method baseline
+5.249549 method headOnly
+6.83485 method dwell
+7.237565 letter g
+7.638187 letter g
+8.041878 letter g
+8.442726 letter g
+8.843171 letter g
+9.245197 letter g
+9.646193 letter g
+10.05006 letter g
+10.40174 size 0.9
+10.45615 letter g
+10.86165 letter g
+11.26797 letter g
+11.50283 size 0.8
+11.67422 letter g
+12.08095 letter g
+12.24558 speed1.25
+12.48115 letter g
+12.88486 letter g
+13.28968 letter g
+13.69263 letter g
+14.02766 speed1
+14.09819 letter g
+14.50192 letter g
+14.90766 letter g
+15.30955 letter g
+15.71051 letter g
+16.11808 letter g
+16.51988 letter g

@@ -140,9 +140,8 @@ public class Dictionary : MonoBehaviour {
 
     public void addPos(Vector2 pos) {
         if (posList.Count == 0) {
-            Server.log("startGesture");
+            Server.log("gestureStart");
         }
-        Server.log("pos " + pos.x + " " + pos.y);
         posList.Add(pos);
     }
 

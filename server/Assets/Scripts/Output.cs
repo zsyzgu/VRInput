@@ -125,10 +125,11 @@ public class Output : MonoBehaviour {
     }
 
     public void updatePhrase() {
+        Debug.Log("Hello");
         phrasesText = getPhrase();
         GetComponent<AudioSource>().PlayOneShot(phraseSound);
 
         inputText = "";
-        Server.log("phraseUpdated");
+        Server.log("phraseUpdate " + phrasesText);
     }
 }

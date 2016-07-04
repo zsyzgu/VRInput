@@ -1,0 +1,24 @@
+13.53653 gestureStart
+13.59071 delete
+14.14728 gestureStart
+14.16728 gestureEnd mm
+14.92013 gestureStart
+15.22906 gestureEnd by
+15.7181 gestureStart
+15.91186 gestureEnd vs
+16.25907 gestureStart
+16.46291 gestureEnd milk
+16.79113 gestureStart
+16.97457 gestureEnd dvd
+17.90078 gestureStart
+17.96025 delete
+18.0578 gestureStart
+18.12152 delete
+18.21527 gestureStart
+18.26099 delete
+18.53937 gestureStart
+18.55351 delete
+18.65384 gestureStart
+18.7167 delete
+18.86242 gestureStart
+18.93642 delete
