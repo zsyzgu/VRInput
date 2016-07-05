@@ -3,10 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class Tracking : MonoBehaviour {
-    int brushRadius = 1;
     bool isDrawing = false;
-    int lastPixelX = -1;
-    int lastPixelY = -1;
 
     private LineRenderer lineRenderer;
     private int rendererCnt = 0;
@@ -27,7 +24,9 @@ public class Tracking : MonoBehaviour {
 
     public void clearCanvas() {
         rendererCnt = 0;
-        lineRenderer.SetVertexCount(rendererCnt);
+        if (lineRenderer != null) {
+            lineRenderer.SetVertexCount(rendererCnt);
+        }
     }
 
 
@@ -35,8 +34,10 @@ public class Tracking : MonoBehaviour {
         RectTransform rect = GetComponentInParent<RectTransform>();
         float width = rect.rect.width * rect.localScale.x;
         float height = rect.rect.height * rect.localScale.y;
-        lineRenderer.SetVertexCount(++rendererCnt);
-        lineRenderer.SetPosition(rendererCnt - 1, new Vector3((x - 0.5f) * width, (y - 0.5f) * height, rect.transform.position.z - 0.01f));
+        if (lineRenderer != null) {
+            lineRenderer.SetVertexCount(++rendererCnt);
+            lineRenderer.SetPosition(rendererCnt - 1, new Vector3((x - 0.5f) * width, (y - 0.5f) * height, rect.transform.position.z - 0.01f));
+        }
     }
 
     public void keepDrawing() {

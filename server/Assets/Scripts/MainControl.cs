@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.VR;
 using UnityEngine.UI;
 
-public class Control : MonoBehaviour {
+public class MainControl : MonoBehaviour {
     const int FRAME_PER_SAMPLE = 5;
 
     public GameObject trackingSpace;
@@ -52,7 +52,7 @@ public class Control : MonoBehaviour {
             }
 
             if (mouseHidden) {
-                Screen.lockCursor = true;
+                Cursor.visible = false;
 
                 float rotationX = trackingSpace.transform.localEulerAngles.y + Input.GetAxis("Mouse X") * 5f;
                 rotationY += Input.GetAxis("Mouse Y") * 5f; 
@@ -61,7 +61,7 @@ public class Control : MonoBehaviour {
 
                 mainControl();
             } else {
-                Screen.lockCursor = false;
+                Cursor.visible = true;
             }
         }
         else {

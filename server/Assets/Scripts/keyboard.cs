@@ -19,15 +19,13 @@ public class Keyboard : MonoBehaviour {
     private float dwellTimestamp;
     private bool dwellTimeout = false;
     private Vector2 lastCursorPos;
-
-    // Use this for initialization
+    
     void Start () {
         output = outputScreen.GetComponent<Output>();
         calnSelectNum();
         searchHomeKey();
     }
 	
-	// Update is called once per frame
 	void Update () {
         updateHover();
         updateDwell();
@@ -40,40 +38,6 @@ public class Keyboard : MonoBehaviour {
                     setKeyColor(key, Color.gray);
                 } else {
                     setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
-                }
-            }
-            else if (key.tag == "control") {
-                if (key == hoverKey) {
-                    setKeyColor(key, Color.yellow);
-                } else {
-                    switch (key.name) {
-                        case "normal":
-                            setKeyColor(key, Server.getMethod() == Server.Method.normal ? Color.white : Color.gray);
-                            break;
-                        case "baseline":
-                            setKeyColor(key, Server.getMethod() == Server.Method.baseline ? Color.white : Color.gray);
-                            break;
-                        case "headOnly":
-                            setKeyColor(key, Server.getMethod() == Server.Method.headOnly ? Color.white : Color.gray);
-                            break;
-                        case "dwell":
-                            setKeyColor(key, Server.getMethod() == Server.Method.dwell ? Color.white : Color.gray);
-                            break;
-                        case "zoonIn":
-                            setKeyColor(key, Server.canZoomIn() ? Color.white : Color.gray);
-                            break;
-                        case "zoonOut":
-                            setKeyColor(key, Server.canZoomOut() ? Color.white : Color.gray);
-                            break;
-                        case "speedUp":
-                            setKeyColor(key, Server.canSpeedUp() ? Color.white : Color.gray);
-                            break;
-                        case "speedDown":
-                            setKeyColor(key, Server.canSpeedDown() ? Color.white : Color.gray);
-                            break;
-                        default:
-                            break;
-                    }
                 }
             } else {
                 setKeyColor(key, key == hoverKey ? Color.yellow : Color.white);
@@ -174,7 +138,7 @@ public class Keyboard : MonoBehaviour {
 
     public bool cursorInsideCmdKeys() {
         foreach (RectTransform key in transform) {
-            if (key.tag == "select" || key.tag == "delete" || key.tag == "page" || key.tag == "control") {
+            if (key.tag == "select" || key.tag == "delete" || key.tag == "page") {
                 if (cursorInsideKey(key)) {
                     return true;
                 }
@@ -219,36 +183,6 @@ public class Keyboard : MonoBehaviour {
                 page++;
             }
             drawSelect();
-        } else if (hoverKey != null && hoverKey.tag == "control") {
-            switch (hoverKey.name) {
-                case "normal":
-                    Server.setMethod(Server.Method.normal);
-                    break;
-                case "baseline":
-                    Server.setMethod(Server.Method.baseline);
-                    break;
-                case "headOnly":
-                    Server.setMethod(Server.Method.headOnly);
-                    break;
-                case "dwell":
-                    Server.setMethod(Server.Method.dwell);
-                    break;
-                case "zoonIn":
-                    Server.zoomIn();
-                    break;
-                case "zoonOut":
-                    Server.zoomOut();
-                    break;
-                case "speedUp":
-                    Server.speedUp();
-                    break;
-                case "speedDown":
-                    Server.speedDown();
-                    break;
-                default:
-                    break;
-            }
-            dictionary.clearPos();
         } else {
             //hover on letter or symbol
             if (Server.getMethod() == Server.Method.baseline || (Server.getMethod() == Server.Method.dwell && dwellTimeout)) {

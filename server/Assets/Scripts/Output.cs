@@ -76,8 +76,6 @@ public class Output : MonoBehaviour {
                 return phrase;
             }
         }
-
-        return "";
     }
 
     public void delete() {
@@ -125,7 +123,6 @@ public class Output : MonoBehaviour {
     }
 
     public void updatePhrase() {
-        Debug.Log("Hello");
         phrasesText = getPhrase();
         GetComponent<AudioSource>().PlayOneShot(phraseSound);
 
