@@ -74,6 +74,9 @@ public class Client : MonoBehaviour {
     }
 
     public void onClient() {
+        if (Input.GetKeyUp(KeyCode.Alpha0)) {
+            sendMessage("0");
+        }
         if (Input.GetKeyUp(KeyCode.Alpha1)) {
             sendMessage("1");
         }
@@ -97,6 +100,9 @@ public class Client : MonoBehaviour {
         }
         if (Input.GetKeyUp(KeyCode.Alpha8)) {
             sendMessage("8");
+        }
+        if (Input.GetKeyUp(KeyCode.Alpha9)) {
+            sendMessage("9");
         }
     }
 

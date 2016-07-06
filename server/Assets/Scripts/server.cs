@@ -14,7 +14,6 @@ public class Server : MonoBehaviour {
     public Text infoText;
     private int port = 1234;
     private string IP = "";
-    private StreamWriter sw;
     
     public enum Method {
         normal = 0,
@@ -25,17 +24,11 @@ public class Server : MonoBehaviour {
     private Method method;
     private int keyboardSizeIndex = 3;
     private int cursorSpeedIndex = 0;
+    private bool inSession = false;
 
     void Start() {
         server = this;
         IP = getIP();
-
-        FileInfo file = new FileInfo(Application.persistentDataPath + "\\" + "log.txt");
-        sw = file.CreateText();
-    }
-
-    void OnDestroy() {
-        sw.Close();
     }
 
     string getIP() {
@@ -97,9 +90,9 @@ public class Server : MonoBehaviour {
 
     void outputInfo() {
         string info = "";
-        info += "IP : " + IP + "\n";
-        info += "size : " + keyboardSize[keyboardSizeIndex] + "\n";
-        info += "speed : " + cursorSpeed[cursorSpeedIndex];
+        info += "IP: " + IP + "\n";
+        info += "size: " + getSize() + "\n";
+        info += "mapping: " + getSpeed();
 
         infoText.text = info;
     }
@@ -117,11 +110,9 @@ public class Server : MonoBehaviour {
 
     static public void log(string message) {
         server.sendMessage(Time.time + " " + message);
-        server.sw.WriteLine(message);
     }
 
     static public void setMethod(Method method) {
-        log("method " + method.ToString());
         server.method = method;
     }
 
@@ -134,6 +125,10 @@ public class Server : MonoBehaviour {
         float size = keyboardSize[keyboardSizeIndex];
         rect.localScale = new Vector3(size, size, size);
         log("size " + size);
+    }
+
+    static public float getSize() {
+        return keyboardSize[server.keyboardSizeIndex];
     }
 
     static public bool canZoomIn() {
@@ -169,7 +164,6 @@ public class Server : MonoBehaviour {
     static public void speedUp() {
         if (canSpeedUp()) {
             server.cursorSpeedIndex++;
-            log("speed" + getSpeed());
         }
     }
 
@@ -180,8 +174,21 @@ public class Server : MonoBehaviour {
     static public void speedDown() {
         if (canSpeedDown()) {
             server.cursorSpeedIndex--;
-            log("speed" + getSpeed());
         }
+    }
+
+    static public bool isInSession() {
+        return server.inSession;
+    }
+
+    static public void startSession() {
+        server.inSession = true;
+        string sessionInfo = server.method.ToString() + "_" + getSize() + "_" + getSpeed();
+        log("session " + sessionInfo);
+    }
+
+    static public void endSession() {
+        server.inSession = false;
     }
 
     void sendMessage(string message) {

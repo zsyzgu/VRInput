@@ -11,10 +11,15 @@ public class ControlPanel : MonoBehaviour {
     }
     
     void Update() {
-        updateHover();
-        updateColor();
-        if (Input.GetButton("Fire1")) {
-            confirm();
+        if (Server.isInSession()) {
+            gameObject.SetActive(false);
+        } else {
+            gameObject.SetActive(true);
+            updateHover();
+            updateColor();
+            if (Input.GetButton("Fire1")) {
+                confirm();
+            }
         }
     }
 
@@ -60,6 +65,9 @@ public class ControlPanel : MonoBehaviour {
                         break;
                     case "speedDown":
                         setKeyColor(key, Server.canSpeedDown() ? Color.white : Color.gray);
+                        break;
+                    case "play":
+                        setKeyColor(key, !Server.isInSession() ? Color.white : Color.gray);
                         break;
                     default:
                         break;
@@ -110,6 +118,9 @@ public class ControlPanel : MonoBehaviour {
                     break;
                 case "speedDown":
                     Server.speedDown();
+                    break;
+                case "play":
+                    Server.startSession();
                     break;
                 default:
                     break;
