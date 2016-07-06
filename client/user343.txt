@@ -1,2 +1,0 @@
-11.29171 gestureStart
-11.31604 gestureEnd hub

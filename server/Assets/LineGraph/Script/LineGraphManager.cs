@@ -67,6 +67,14 @@ public class LineGraphManager : MonoBehaviour {
 		// showing graph
 		ShowGraph();*/
 	}
+
+    void Update() {
+        if (Server.isInSession()) {
+            gameObject.SetActive(false);
+        } else {
+            gameObject.SetActive(true);
+        }
+    }
 	
 	private void ShowData(GraphData[] gdlist,int playerNum,float gap) {
 

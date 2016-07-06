@@ -11,15 +11,10 @@ public class ControlPanel : MonoBehaviour {
     }
     
     void Update() {
-        if (Server.isInSession()) {
-            gameObject.SetActive(false);
-        } else {
-            gameObject.SetActive(true);
-            updateHover();
-            updateColor();
-            if (Input.GetButton("Fire1")) {
-                confirm();
-            }
+        updateHover();
+        updateColor();
+        if (Input.GetButtonUp("Fire1")) {
+            confirm();
         }
     }
 

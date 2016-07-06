@@ -76,6 +76,7 @@
      <Compile Include="Assets\OVR\Scripts\Util\OVRTrackerBounds.cs" />
      <Compile Include="Assets\Scripts\ControlPanel.cs" />
      <Compile Include="Assets\Scripts\Dictionary.cs" />
+     <Compile Include="Assets\Scripts\InfoPanel.cs" />
      <Compile Include="Assets\Scripts\Keyboard.cs" />
      <Compile Include="Assets\Scripts\MainControl.cs" />
      <Compile Include="Assets\Scripts\Output.cs" />

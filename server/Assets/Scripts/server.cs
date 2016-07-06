@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
 
 public class Server : MonoBehaviour {
     static private Server server;
@@ -13,7 +12,6 @@ public class Server : MonoBehaviour {
     public Canvas canvas;
     public Text infoText;
     private int port = 1234;
-    private string IP = "";
     
     public enum Method {
         normal = 0,
@@ -28,20 +26,6 @@ public class Server : MonoBehaviour {
 
     void Start() {
         server = this;
-        IP = getIP();
-    }
-
-    string getIP() {
-        IPHostEntry host;
-        string localIP = "";
-        host = Dns.GetHostEntry(Dns.GetHostName());
-        foreach (IPAddress ip in host.AddressList) {
-            if (ip.AddressFamily == AddressFamily.InterNetwork) {
-                localIP = ip.ToString();
-                break;
-            }
-        }
-        return localIP;
     }
 
     void Update() {
@@ -58,7 +42,19 @@ public class Server : MonoBehaviour {
         }
 
         command();
-        outputInfo();
+    }
+
+    static public string getIP() {
+        IPHostEntry host;
+        string localIP = "";
+        host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (IPAddress ip in host.AddressList) {
+            if (ip.AddressFamily == AddressFamily.InterNetwork) {
+                localIP = ip.ToString();
+                break;
+            }
+        }
+        return localIP;
     }
 
     void command() {
@@ -88,15 +84,6 @@ public class Server : MonoBehaviour {
         }
     }
 
-    void outputInfo() {
-        string info = "";
-        info += "IP: " + IP + "\n";
-        info += "size: " + getSize() + "\n";
-        info += "mapping: " + getSpeed();
-
-        infoText.text = info;
-    }
-
     void startServer() {
         NetworkConnectionError error = Network.InitializeServer(12, port, false);
         switch (error) {
@@ -109,7 +96,9 @@ public class Server : MonoBehaviour {
     }
 
     static public void log(string message) {
-        server.sendMessage(Time.time + " " + message);
+        if (Server.isInSession()) {
+            server.sendMessage(Time.time + " " + message);
+        }
     }
 
     static public void setMethod(Method method) {

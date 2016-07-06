@@ -8,13 +8,16 @@ public class Client : MonoBehaviour {
     static private int PHRASES_ON_GUI = 10;
     private string IP = "";
     private string userName = "";
+    private string sessionInfo = "";
     private int port = 1234;
     private StreamWriter sw;
     private ArrayList messageList = new ArrayList();
 
     void Start() {
         IP = getIP();
-        userName = "user" + Random.Range(100, 1000);
+        var epochStart = new System.DateTime(1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
+        int timestamp = (int)(System.DateTime.UtcNow - epochStart).TotalSeconds;
+        userName = "user" + timestamp;
     }
 
     void Update() {
@@ -111,7 +114,10 @@ public class Client : MonoBehaviour {
     }
 
     void recvMessage(string message) {
-        sw = new StreamWriter(userName + ".txt", true);
+        if (message.Split(' ')[1] == "session") {
+            sessionInfo = message.Split(' ')[2];
+        }
+        sw = new StreamWriter(userName + "_" + sessionInfo + ".txt", true);
         sw.WriteLine(message);
         sw.Close();
         messageList.Add(message);

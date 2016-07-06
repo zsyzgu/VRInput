@@ -19,13 +19,11 @@ public class MainControl : MonoBehaviour {
     void OnGUI() {
 
     }
-
-    // Use this for initialization
+    
     void Start() {
 
     }
-
-    // Update is called once per frame
+    
     void Update() {
         rotateHead();
     }
