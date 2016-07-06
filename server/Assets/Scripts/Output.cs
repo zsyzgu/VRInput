@@ -1,21 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class Output : MonoBehaviour {
+    private static int PHRASES_PER_SESSION = 1;
+
     public GameObject keyboard;
     public Text phrasesField;
     public Text inputField;
     public AudioClip wordSound;
     public AudioClip phraseSound;
+    public GameObject lineGraph;
 
     private string phrasesText = "";
     private string inputText = "";
     private Dictionary dictionary;
     private System.Random random = new System.Random();
     private string[] phrases = {};
+    private int completedPhrases = -1;
+    private List<float> sessionRate = new List<float>();
+    private int sessionLetterCnt;
+    private float sessionStartTime;
 
-	void Start () {
+    void Start () {
         dictionary = keyboard.GetComponent<Dictionary>();
 
         TextAsset textAsset = Resources.Load("phrases") as TextAsset;
@@ -126,7 +134,40 @@ public class Output : MonoBehaviour {
         phrasesText = getPhrase();
         GetComponent<AudioSource>().PlayOneShot(phraseSound);
 
+        if (Server.isInSession()) {
+            //session begin
+            if (completedPhrases == -1) {
+                sessionStartTime = Time.time;
+                sessionLetterCnt = 0;
+            }
+            completedPhrases++;
+
+            //each phrase
+            for (int i = 0; i < phrasesText.Length; i++) {
+                if (char.IsLetter(phrasesText[i])) {
+                    sessionLetterCnt++;
+                }
+            }
+
+            //session end
+            if (completedPhrases >= PHRASES_PER_SESSION) {
+                completedPhrases = -1;
+                Server.endSession();
+                showRate();
+            }
+        }
+
         inputText = "";
         Server.log("phraseUpdate " + phrasesText);
+    }
+
+    private void showRate() {
+        float escapeTime = Time.time - sessionStartTime;
+        float rate = sessionLetterCnt / escapeTime * 60 / 5;
+
+        sessionRate.Add(rate);
+        LineGraphManager manager = lineGraph.GetComponent<LineGraphManager>();
+        manager.setLine(sessionRate);
+        manager.show();
     }
 }

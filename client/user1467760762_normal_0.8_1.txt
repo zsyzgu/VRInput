@@ -1,0 +1,23 @@
+23.66464 session normal_0.8_1
+23.66464 phraseUpdate important news always seems to be late
+25.23094 gestureStart
+29.77434 gestureEnd important
+30.60782 gestureStart
+31.94273 gestureEnd news
+32.72019 gestureStart
+36.19841 gestureEnd always
+37.11736 gestureStart
+38.92846 gestureEnd seems
+40.20112 gestureStart
+40.7852 gestureEnd too
+42.35737 gestureStart
+42.38454 select to
+43.3425 gestureStart
+43.88972 gestureEnd be
+45.23206 gestureStart
+47.23887 gestureEnd late
+47.23887 phraseUpdate a good response to the question
+48.95749 gestureStart
+49.00636 gestureEnd as
+50.35867 gestureStart
+50.40063 select a

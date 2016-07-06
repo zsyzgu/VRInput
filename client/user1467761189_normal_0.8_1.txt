@@ -1,0 +1,23 @@
+23.51178 session normal_0.8_1
+23.51178 phraseUpdate have a good weekend
+24.98254 gestureStart
+26.54488 gestureEnd have
+27.30215 gestureStart
+27.38274 gestureEnd a
+28.19279 gestureStart
+29.34463 gestureEnd good
+30.34682 gestureStart
+33.33469 gestureEnd weekend
+33.33469 phraseUpdate just what the doctor ordered
+34.57837 gestureStart
+36.71971 gestureEnd just
+37.63161 gestureStart
+39.64679 gestureEnd what
+40.37536 gestureStart
+41.30426 gestureEnd thee
+42.47134 gestureStart
+42.52027 select the
+43.25605 gestureStart
+45.78146 gestureEnd doctor
+47.37437 gestureStart
+50.0237 gestureEnd ordered

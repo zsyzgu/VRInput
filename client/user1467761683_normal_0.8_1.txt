@@ -1,0 +1,26 @@
+61.23801 session normal_0.8_1
+61.23801 phraseUpdate bad for the environment
+62.67456 gestureStart
+63.66972 gestureEnd bad
+64.90023 gestureStart
+66.11006 gestureEnd four
+67.06944 gestureStart
+67.11673 select for
+68.11111 gestureStart
+68.99805 gestureEnd thee
+70.06792 gestureStart
+70.10275 select the
+70.94101 gestureStart
+76.46132 gestureEnd environment
+81.90377 session normal_0.8_1
+81.90377 phraseUpdate fall is my favorite season
+83.36406 gestureStart
+84.65456 gestureEnd fall
+85.54711 gestureStart
+86.29542 gestureEnd is
+87.28405 gestureStart
+87.76817 gestureEnd my
+89.29771 gestureStart
+93.3006 gestureEnd favorite
+94.16786 gestureStart
+96.83115 gestureEnd season

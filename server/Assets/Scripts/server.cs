@@ -11,6 +11,9 @@ public class Server : MonoBehaviour {
 
     public Canvas canvas;
     public Text infoText;
+    public GameObject output;
+    public GameObject infoPanel;
+    public GameObject lineGraph;
     private int port = 1234;
     
     public enum Method {
@@ -172,12 +175,18 @@ public class Server : MonoBehaviour {
 
     static public void startSession() {
         server.inSession = true;
+        server.infoPanel.SetActive(false);
+        server.lineGraph.SetActive(false);
+
         string sessionInfo = server.method.ToString() + "_" + getSize() + "_" + getSpeed();
         log("session " + sessionInfo);
+        server.output.GetComponent<Output>().updatePhrase();
     }
 
     static public void endSession() {
         server.inSession = false;
+        server.infoPanel.SetActive(true);
+        server.lineGraph.SetActive(true);
     }
 
     void sendMessage(string message) {

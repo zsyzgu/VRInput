@@ -200,8 +200,10 @@ public class Keyboard : MonoBehaviour {
                 drawSelect();
                 if (Server.getMethod() == Server.Method.normal) {
                     //when tap is not on, user must select
-                    string defaultWord = drawDefaultWord();
-                    Server.log("gestureEnd " + defaultWord);
+                    if (wordList.Count > 0) {
+                        Server.log("gestureEnd " + ((Dictionary.Word)wordList[0]).word);
+                        drawDefaultWord();
+                    }
                 }
             }
             dictionary.clearPos();
@@ -232,13 +234,10 @@ public class Keyboard : MonoBehaviour {
         }
     }
 
-    string drawDefaultWord() {
-        string word = "";
+    void drawDefaultWord() {
         if (wordList.Count > 0) {
-            word = ((Dictionary.Word)wordList[0]).word;
-            output.addWord(word);
+            output.addWord(((Dictionary.Word)wordList[0]).word);
             page = 0;
         }
-        return word;
     }
 }

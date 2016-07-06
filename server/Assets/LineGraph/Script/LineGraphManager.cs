@@ -4,8 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class LineGraphManager : MonoBehaviour {
-
-	public GameObject linerenderer;
+    public GameObject linerenderer;
 	public GameObject pointer;
 
 	public GameObject pointerRed;
@@ -34,45 +33,41 @@ public class LineGraphManager : MonoBehaviour {
 
 	private float lrWidth = 0.1f;
 	private int dataGap = 0;
+    private bool viewing = false;
+    public GameObject mainCamera;
 
-    public void setLine(List<float> values, bool isPlayer) {
+    public void setLine(List<float> values) {
+        graphDataPlayer1.Clear();
         for (int i = 0; i < values.Count; i++) {
             GraphData gd = new GraphData();
             gd.marbles = values[i];
-            if (isPlayer) {
-                graphDataPlayer1.Add(gd);
-            } else {
-                graphDataPlayer2.Add(gd);
-            }
+            graphDataPlayer1.Add(gd);
         }
     }
 
     public void show() {
+        viewing = true;
+        mainCamera.transform.position = transform.position + new Vector3(5, 3, -10f);
         ShowGraph();
     }
 
 	void Start(){
-        /*
-        // adding random data
-        int index = 10;
-		for(int i = 0; i < index; i++){
-			GraphData gd = new GraphData();
-			gd.marbles = Random.Range(10,20);
-			graphDataPlayer1.Add(gd);
-			GraphData gd2 = new GraphData();
-			gd2.marbles = Random.Range(10,20);
-			graphDataPlayer2.Add(gd2);
-		}
-
-		// showing graph
-		ShowGraph();*/
-	}
+        TextAsset textAsset = Resources.Load("record") as TextAsset;
+        string[] values = textAsset.text.Split(' ');
+        graphDataPlayer2.Clear();
+        for (int i = 0; i < values.Length; i++) {
+            GraphData gd = new GraphData();
+            gd.marbles = int.Parse(values[i]);
+            graphDataPlayer2.Add(gd);
+        }
+    }
 
     void Update() {
-        if (Server.isInSession()) {
-            gameObject.SetActive(false);
-        } else {
-            gameObject.SetActive(true);
+        if (viewing) {
+            if (Input.GetButtonUp("Fire1")) {
+                mainCamera.transform.position = Vector3.zero;
+                viewing = false;
+            }
         }
     }
 	
@@ -105,11 +100,10 @@ public class LineGraphManager : MonoBehaviour {
 	}
 
     private void ShowGraph(){
-
 		ClearGraph();
 
 		if(graphDataPlayer1.Count >= 1 && graphDataPlayer2.Count >= 1){
-			holder = Instantiate(HolderPrefb,Vector3.zero,Quaternion.identity) as GameObject;
+			holder = Instantiate(HolderPrefb,transform.position,Quaternion.identity) as GameObject;
 			holder.name = "h2";
 
 			GraphData[] gd1 = new GraphData[graphDataPlayer1.Count];

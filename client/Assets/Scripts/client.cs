@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 
 public class Client : MonoBehaviour {
-    static private int PHRASES_ON_GUI = 10;
+    static private int PHRASES_ON_GUI = 20;
     private string IP = "";
     private string userName = "";
     private string sessionInfo = "";
@@ -44,11 +44,11 @@ public class Client : MonoBehaviour {
             }
         } else {
             string messages = "";
-            int st = messageList.Count > 10 ? messageList.Count - 10 : 0;
+            int st = messageList.Count > PHRASES_ON_GUI ? messageList.Count - PHRASES_ON_GUI : 0;
             for (int i = st; i < messageList.Count; i++) {
                 messages += (string)messageList[i] + "\n";
             }
-            GUILayout.TextArea(messages, GUILayout.Width(500), GUILayout.Height(200));
+            GUILayout.TextArea(messages, GUILayout.Width(500), GUILayout.Height(400));
         }
     }
 

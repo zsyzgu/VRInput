@@ -10,12 +10,7 @@ public class InfoPanel : MonoBehaviour {
     }
 	
 	void Update () {
-        if (Server.isInSession()) {
-            gameObject.SetActive(false);
-        } else {
-            gameObject.SetActive(true);
-            outputInfo();
-        }
+        outputInfo();
     }
 
     void outputInfo() {
