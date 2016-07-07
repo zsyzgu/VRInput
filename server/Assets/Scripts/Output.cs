@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class Output : MonoBehaviour {
-    private static int PHRASES_PER_SESSION = 1;
+    private static int PHRASES_PER_SESSION = 5;
 
     public GameObject keyboard;
     public Text phrasesField;

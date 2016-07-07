@@ -31,10 +31,14 @@ public class LineGraphManager : MonoBehaviour {
 	public TextMesh player1name;
 	public TextMesh player2name;
 
+    public TextMesh player1Rate;
+    public TextMesh player2Rate;
+
 	private float lrWidth = 0.1f;
 	private int dataGap = 0;
     private bool viewing = false;
     public GameObject mainCamera;
+    public GameObject congratulation;
 
     public void setLine(List<float> values) {
         graphDataPlayer1.Clear();
@@ -48,25 +52,72 @@ public class LineGraphManager : MonoBehaviour {
     public void show() {
         viewing = true;
         mainCamera.transform.position = transform.position + new Vector3(5, 3, -10f);
+        if (graphDataPlayer2.Count == 0) {
+            getRecordRate();
+        }
         ShowGraph();
+        showRate();
+    }
+
+    void showRate() {
+        float aveRate1 = 0f, maxRate1 = 0f, currRate1 = 0f;
+        float aveRate2 = 0f, maxRate2 = 0f;
+
+        for (int i = 0; i < graphDataPlayer1.Count; i++) {
+            float value = graphDataPlayer1[i].marbles;
+            aveRate1 += value;
+            maxRate1 = Mathf.Max(maxRate1, value);
+        }
+        if (graphDataPlayer1.Count > 0) {
+            aveRate1 /= graphDataPlayer1.Count;
+        }
+        currRate1 = graphDataPlayer1[graphDataPlayer1.Count - 1].marbles;
+
+        for (int i = 0; i < graphDataPlayer2.Count; i++) {
+            float value = graphDataPlayer2[i].marbles;
+            aveRate2 += value;
+            maxRate2 = Mathf.Max(maxRate2, value);
+        }
+        if (graphDataPlayer2.Count > 0) {
+            aveRate2 /= graphDataPlayer2.Count;
+        }
+
+        player1Rate.text = "aveRate: " + aveRate1 + "\nmaxRate: " + maxRate1 + "\ncurrRate: " + currRate1;
+        player2Rate.text = "aveRate: " + aveRate2 + "\nmaxRate: " + maxRate2;
     }
 
 	void Start(){
+
+    }
+
+    void getRecordRate() {
         TextAsset textAsset = Resources.Load("record") as TextAsset;
-        string[] values = textAsset.text.Split(' ');
-        graphDataPlayer2.Clear();
-        for (int i = 0; i < values.Length; i++) {
-            GraphData gd = new GraphData();
-            gd.marbles = int.Parse(values[i]);
-            graphDataPlayer2.Add(gd);
+
+        string[] methods = textAsset.text.Split('\n');
+        for (int i = 0; i < methods.Length; i++) {
+            string[] values = methods[i].Split(' ');
+            if (values[0] == Server.getMethod().ToString()) {
+                player2name.text = "record (" + values[1] + ")";
+                graphDataPlayer2.Clear();
+                for (int j = 2; j < values.Length; j++) {
+                    GraphData gd = new GraphData();
+                    gd.marbles = int.Parse(values[j]);
+                    graphDataPlayer2.Add(gd);
+                }
+                break;
+            }
         }
     }
 
     void Update() {
         if (viewing) {
             if (Input.GetButtonUp("Fire1")) {
-                mainCamera.transform.position = Vector3.zero;
-                viewing = false;
+                if (graphDataPlayer1.Count < graphDataPlayer2.Count) {
+                    mainCamera.transform.position = Vector3.zero;
+                    viewing = false;
+                } else {
+                    congratulation.SetActive(true);
+                }
             }
         }
     }
