@@ -141,16 +141,16 @@ public class Output : MonoBehaviour {
                 sessionLetterCnt = 0;
             }
             completedPhrases++;
-
-            //each phrase
-            for (int i = 0; i < phrasesText.Length; i++) {
-                if (char.IsLetter(phrasesText[i])) {
-                    sessionLetterCnt++;
+            
+            if (completedPhrases < PHRASES_PER_SESSION) {
+                //each phrase
+                for (int i = 0; i < phrasesText.Length; i++) {
+                    if (char.IsLetter(phrasesText[i])) {
+                        sessionLetterCnt++;
+                    }
                 }
-            }
-
-            //session end
-            if (completedPhrases >= PHRASES_PER_SESSION) {
+            } else {
+                //session end
                 completedPhrases = -1;
                 Server.endSession();
                 showRate();
@@ -164,6 +164,7 @@ public class Output : MonoBehaviour {
     private void showRate() {
         float escapeTime = Time.time - sessionStartTime;
         float rate = sessionLetterCnt / escapeTime * 60 / 5;
+        Debug.Log(escapeTime + ", " + sessionLetterCnt);
 
         sessionRate.Add(rate);
         LineGraphManager manager = lineGraph.GetComponent<LineGraphManager>();
