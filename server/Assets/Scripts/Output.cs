@@ -4,8 +4,6 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class Output : MonoBehaviour {
-    private static int PHRASES_PER_SESSION = 5;
-
     public GameObject keyboard;
     public Text phrasesField;
     public Text inputField;
@@ -142,7 +140,7 @@ public class Output : MonoBehaviour {
             }
             completedPhrases++;
             
-            if (completedPhrases < PHRASES_PER_SESSION) {
+            if (completedPhrases < Server.getPhrasePerBlock()) {
                 //each phrase
                 for (int i = 0; i < phrasesText.Length; i++) {
                     if (char.IsLetter(phrasesText[i])) {
@@ -158,7 +156,7 @@ public class Output : MonoBehaviour {
         }
 
         inputText = "";
-        Server.log("phraseUpdate " + phrasesText);
+        Server.log("phrase " + phrasesText);
     }
 
     private void showRate() {

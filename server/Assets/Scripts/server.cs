@@ -6,8 +6,6 @@ using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
     static private Server server;
-    static private float[] keyboardSize = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
-    static private float[] cursorSpeed = {1.0f, 1.25f, 1.5f, 1.75f, 2.0f};
 
     public Canvas canvas;
     public Text infoText;
@@ -15,7 +13,13 @@ public class Server : MonoBehaviour {
     public GameObject infoPanel;
     public GameObject lineGraph;
     private int port = 1234;
-    
+
+    private int phrasePerBlock = 0;
+    private float[] keyboardSize;
+    private float[] cursorSpeed;
+    private int keyboardSizeIndex = 0;
+    private int cursorSpeedIndex = 0;
+
     public enum Method {
         normal = 0,
         baseline = 1,
@@ -23,12 +27,37 @@ public class Server : MonoBehaviour {
         dwell = 3
     };
     private Method method;
-    private int keyboardSizeIndex = 3;
-    private int cursorSpeedIndex = 0;
     private bool inSession = false;
 
     void Start() {
         server = this;
+        loadSetting();
+    }
+
+    void loadSetting() {
+        TextAsset textAsset = Resources.Load("setting") as TextAsset;
+
+        string[] methods = textAsset.text.Split('\n');
+        for (int i = 0; i < methods.Length; i++) {
+            string[] values = methods[i].Split(' ');
+            if (values[0] == "phrase") {
+                phrasePerBlock = int.Parse(values[1]);
+            }
+            if (values[0] == "size") {
+                keyboardSize = new float[values.Length - 2];
+                keyboardSizeIndex = int.Parse(values[1]);
+                for (int j = 2; j < values.Length; j++) {
+                    keyboardSize[j - 2] = float.Parse(values[j]);
+                }
+            }
+            if (values[0] == "speed") {
+                cursorSpeed = new float[values.Length - 2];
+                cursorSpeedIndex = int.Parse(values[1]);
+                for (int j = 2; j < values.Length; j++) {
+                    cursorSpeed[j - 2] = float.Parse(values[j]);
+                }
+            }
+        }
     }
 
     void Update() {
@@ -104,6 +133,10 @@ public class Server : MonoBehaviour {
         }
     }
 
+    static public int getPhrasePerBlock() {
+        return server.phrasePerBlock;
+    }
+
     static public void setMethod(Method method) {
         server.method = method;
     }
@@ -120,11 +153,11 @@ public class Server : MonoBehaviour {
     }
 
     static public float getSize() {
-        return keyboardSize[server.keyboardSizeIndex];
+        return server.keyboardSize[server.keyboardSizeIndex];
     }
 
     static public bool canZoomIn() {
-        return server.keyboardSizeIndex + 1 < keyboardSize.Length;
+        return server.keyboardSizeIndex + 1 < server.keyboardSize.Length;
     }
 
     static public void zoomIn() {
@@ -146,11 +179,11 @@ public class Server : MonoBehaviour {
     }
 
     static public float getSpeed() {
-        return cursorSpeed[server.cursorSpeedIndex];
+        return server.cursorSpeed[server.cursorSpeedIndex];
     }
 
     static public bool canSpeedUp() {
-        return server.cursorSpeedIndex + 1 < cursorSpeed.Length;
+        return server.cursorSpeedIndex + 1 < server.cursorSpeed.Length;
     }
 
     static public void speedUp() {

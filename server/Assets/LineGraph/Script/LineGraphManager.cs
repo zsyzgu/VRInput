@@ -91,7 +91,7 @@ public class LineGraphManager : MonoBehaviour {
     }
 
     void getRecordRate() {
-        TextAsset textAsset = Resources.Load("record") as TextAsset;
+        TextAsset textAsset = Resources.Load("setting") as TextAsset;
 
         string[] methods = textAsset.text.Split('\n');
         for (int i = 0; i < methods.Length; i++) {
