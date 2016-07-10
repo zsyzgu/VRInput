@@ -131,6 +131,7 @@ public class Server : MonoBehaviour {
         if (Server.isInSession()) {
             server.sendMessage(Time.time + " " + message);
         }
+        Debug.Log(Time.time + " " + message);
     }
 
     static public int getPhrasePerBlock() {
@@ -149,7 +150,6 @@ public class Server : MonoBehaviour {
         RectTransform rect = canvas.GetComponent<RectTransform>();
         float size = keyboardSize[keyboardSizeIndex];
         rect.localScale = new Vector3(size, size, size);
-        log("size " + size);
     }
 
     static public float getSize() {

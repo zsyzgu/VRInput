@@ -3,7 +3,8 @@ using System.IO;
 using System.Collections;
 
 public class Dictionary : MonoBehaviour {
-    // script on keyboard
+    public Output output;
+
     public const int MAX_WORD = 5000;
     public const int METRIC_SAMPLE = 16;
     public const float DIST_THRESHOLD = 0.2f;
@@ -135,7 +136,8 @@ public class Dictionary : MonoBehaviour {
 
     public void addPos(Vector2 pos) {
         if (posList.Count == 0) {
-            Server.log("gestureStart");
+            output.GetComponent<Output>().gestureStart();
+
         }
         posList.Add(pos);
     }

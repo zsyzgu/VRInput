@@ -19,7 +19,8 @@ public class Output : MonoBehaviour {
     private int completedPhrases = -1;
     private List<float> sessionRate = new List<float>();
     private int sessionLetterCnt;
-    private float sessionStartTime;
+    private float phraseStartTime;
+    private float sessionTime;
 
     void Start () {
         dictionary = keyboard.GetComponent<Dictionary>();
@@ -128,6 +129,13 @@ public class Output : MonoBehaviour {
         }
     }
 
+    public void gestureStart() {
+        if (inputText == "") {
+            phraseStartTime = Time.time;
+        }
+        Server.log("gestureStart");
+    }
+
     public void updatePhrase() {
         phrasesText = getPhrase();
         GetComponent<AudioSource>().PlayOneShot(phraseSound);
@@ -135,8 +143,10 @@ public class Output : MonoBehaviour {
         if (Server.isInSession()) {
             //session begin
             if (completedPhrases == -1) {
-                sessionStartTime = Time.time;
+                sessionTime = 0;
                 sessionLetterCnt = 0;
+            } else {
+                sessionTime += Time.time - phraseStartTime;
             }
             completedPhrases++;
             
@@ -160,9 +170,8 @@ public class Output : MonoBehaviour {
     }
 
     private void showRate() {
-        float escapeTime = Time.time - sessionStartTime;
-        float rate = sessionLetterCnt / escapeTime * 60 / 5;
-        Debug.Log(escapeTime + ", " + sessionLetterCnt);
+        float rate = sessionLetterCnt / sessionTime * 60 / 5;
+        Debug.Log(sessionTime + ", " + sessionLetterCnt);
 
         sessionRate.Add(rate);
         LineGraphManager manager = lineGraph.GetComponent<LineGraphManager>();
