@@ -178,7 +178,6 @@ public class Output : MonoBehaviour {
 
     private void showRate() {
         float rate = sessionLetterCnt / sessionTime * 60 / 5;
-        Debug.Log(sessionTime + ", " + sessionLetterCnt);
 
         sessionRate.Add(rate);
         LineGraphManager manager = lineGraph.GetComponent<LineGraphManager>();

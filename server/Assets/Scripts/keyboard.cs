@@ -192,8 +192,8 @@ public class Keyboard : MonoBehaviour {
                         ch = char.ToLower(ch);
                     }
                     output.checkPhraseStart();
-                    output.addChar(ch);
                     Server.log("letter " + ch);
+                    output.addChar(ch);
                 }
             } else {
                 wordList = dictionary.getWordList();
