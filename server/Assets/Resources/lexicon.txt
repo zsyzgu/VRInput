@@ -1010,7 +1010,6 @@ site 140
 star 140
 starting 140
 stories 140
-thee 140
 therefore 140
 true 140
 types 140

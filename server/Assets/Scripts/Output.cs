@@ -16,6 +16,7 @@ public class Output : MonoBehaviour {
     private Dictionary dictionary;
     private System.Random random = new System.Random();
     private string[] phrases = {};
+    private bool[] phraseUsed = {};
     private int completedPhrases = -1;
     private List<float> sessionRate = new List<float>();
     private int sessionLetterCnt;
@@ -27,9 +28,11 @@ public class Output : MonoBehaviour {
 
         TextAsset textAsset = Resources.Load("phrases") as TextAsset;
         phrases = textAsset.text.Split('\n');
+        phraseUsed = new bool[phrases.Length];
 
         //null char at the end !!
         for (int i = 0; i < phrases.Length; i++) {
+            phraseUsed[i] = false;
             if (phrases[i].Length != 0 && char.IsLetter(phrases[i][phrases[i].Length - 1]) == false) {
                 phrases[i] = phrases[i].Substring(0, phrases[i].Length - 1);
             }
@@ -69,6 +72,10 @@ public class Output : MonoBehaviour {
         int cnt = 0;
 
         for (int i = random.Next(phrases.Length); ; i = random.Next(phrases.Length)) {
+            if (phraseUsed[i]) {
+                continue;
+            }
+
             string phrase = phrases[i];
             string[] words = phrase.Split(' ');
 
@@ -80,6 +87,7 @@ public class Output : MonoBehaviour {
             }
 
             if (check || ++cnt == 20) {
+                phraseUsed[i] = true;
                 return phrase;
             }
         }
