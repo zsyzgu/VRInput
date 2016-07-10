@@ -136,8 +136,10 @@ public class Dictionary : MonoBehaviour {
 
     public void addPos(Vector2 pos) {
         if (posList.Count == 0) {
-            output.GetComponent<Output>().gestureStart();
-
+            output.GetComponent<Output>().checkPhraseStart();
+            if (Server.getMethod() == Server.Method.normal || Server.getMethod() == Server.Method.headOnly) {
+                Server.log("gestureStart");
+            }
         }
         posList.Add(pos);
     }

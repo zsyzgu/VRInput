@@ -129,11 +129,10 @@ public class Output : MonoBehaviour {
         }
     }
 
-    public void gestureStart() {
+    public void checkPhraseStart() {
         if (inputText == "") {
             phraseStartTime = Time.time;
         }
-        Server.log("gestureStart");
     }
 
     public void updatePhrase() {

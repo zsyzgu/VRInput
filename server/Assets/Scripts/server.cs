@@ -131,7 +131,6 @@ public class Server : MonoBehaviour {
         if (Server.isInSession()) {
             server.sendMessage(Time.time + " " + message);
         }
-        Debug.Log(Time.time + " " + message);
     }
 
     static public int getPhrasePerBlock() {

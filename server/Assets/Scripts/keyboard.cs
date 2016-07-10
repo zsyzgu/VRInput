@@ -191,7 +191,7 @@ public class Keyboard : MonoBehaviour {
                     if (char.IsLetter(ch)) {
                         ch = char.ToLower(ch);
                     }
-                    output.gestureStart();
+                    output.checkPhraseStart();
                     output.addChar(ch);
                     Server.log("letter " + ch);
                 }
