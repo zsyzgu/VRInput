@@ -68,8 +68,7 @@ public class ControlPanel : MonoBehaviour {
                         if (canPlay()) {
                             if (Server.isInputing()) {
                                 setKeyColor(key, Color.white);
-                            }
-                            else {
+                            } else {
                                 setKeyColor(key, Color.green);
                             }
                         } else {
@@ -107,7 +106,7 @@ public class ControlPanel : MonoBehaviour {
     }
 
     bool canPlay() {
-        return !Server.isInSession() || Server.isInputing();
+        return ((!Server.isInSession() && (Server.blockIndex + 1) < Server.BLOCK_PER_SESSION) || Server.isInputing()) ;
     }
 
     bool acceptable() {
