@@ -15,6 +15,7 @@ public class Server : MonoBehaviour {
     public Text infoText;
     public GameObject output;
     public GameObject infoPanel;
+    public GameObject warning;
     private int port = 1234;
     
     private float[] keyboardSize = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
@@ -133,7 +134,6 @@ public class Server : MonoBehaviour {
     static public void log(string message) {
         if (Server.isInputing()) {
             server.sendMessage(Time.time + " " + message);
-            Debug.Log(Time.time + " " + message);
         }
     }
 
@@ -229,6 +229,7 @@ public class Server : MonoBehaviour {
     private void startSession() {
         inSession = true;
         inputing = true;
+        server.warning.GetComponent<Text>().text = "";
 
         string sessionInfo = method.ToString() + "_" + getSize() + "_" + getSpeed();
         log("session " + sessionInfo);
@@ -238,6 +239,11 @@ public class Server : MonoBehaviour {
     static public void endSession() {
         server.inSession = false;
         server.inputing = false;
+        if (blockIndex + 1 == BLOCK_PER_SESSION) {
+            server.warning.GetComponent<Text>().text = "Session Finish! You can have a rest.";
+        } else if (blockIndex + 1 > 0) {
+            server.warning.GetComponent<Text>().text = "Block Finish! You can have a rest.";
+        }
     }
 
     static public bool isInputing() {

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Lexicon : MonoBehaviour {
+    static private float SIGMA = 0.1f;
     public Output output;
 
     public const int MAX_WORD = 5000;
@@ -82,6 +83,40 @@ public class Lexicon : MonoBehaviour {
         return dict[word];
     }
 
+    public ArrayList getGaussWordList() {
+        ArrayList allWordList = new ArrayList();
+
+        for (int i = 0; i < lexicon.Count; i++) {
+            string str = ((Word)lexicon[i]).word;
+
+            if (posList.Count != str.Length) {
+                continue;
+            }
+
+            float sum = 0f;
+            ArrayList wordPosList = new ArrayList();
+            for (int j = 0; j < str.Length; j++) {
+                float x = Vector2.Distance(calnLetterPos(str[j]), (Vector2)posList[j]);
+                sum = sum - x * x / (2 * SIGMA * SIGMA);
+            }
+
+            Word word = new Word();
+            word.word = str;
+            word.pri = -Mathf.Exp(sum) * ((Word)lexicon[i]).pri;
+            allWordList.Add(word);
+        }
+
+        allWordList.Sort(new WordComparer());
+
+        ArrayList wordList = new ArrayList();
+        for (int i = 0; i < 4 && i < allWordList.Count; i++) {
+            Word word = (Word)allWordList[i];
+            word.pri = -word.pri;
+            wordList.Add(word);
+        }
+        return wordList;
+    }
+
     public ArrayList getWordList() {
         if (posList.Count == 0) {
             return new ArrayList();
@@ -154,6 +189,12 @@ public class Lexicon : MonoBehaviour {
         }
         Server.log("pos " + pos.x + " " + pos.y);
         posList.Add(pos);
+    }
+
+    public void deletePos() {
+        if (posList.Count != 0) {
+            posList.RemoveAt(posList.Count - 1);
+        }
     }
 
     public void clearPos() {

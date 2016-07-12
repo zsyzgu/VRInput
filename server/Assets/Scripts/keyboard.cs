@@ -9,6 +9,7 @@ public class Keyboard : MonoBehaviour {
     public Sprite waitingCircleImage;
     public RectTransform cursor;
     public GameObject outputScreen;
+    public GameObject mainCamera;
 
     private Output output;
     private RectTransform hoverKey = null;
@@ -147,6 +148,14 @@ public class Keyboard : MonoBehaviour {
         return false;
     }
 
+    void clearAllScreen() {
+        Lexicon lexicon = GetComponent<Lexicon>();
+        page = 0;
+        lexicon.clearPos();
+        wordList.Clear();
+        drawSelect();
+    }
+
     public void confirm() {
         Lexicon lexicon = GetComponent<Lexicon>();
         updateHover();
@@ -155,16 +164,29 @@ public class Keyboard : MonoBehaviour {
             if (Server.getMethod() != Server.Method.headOnly || wordList.Count == 0) {
                 Server.log("delete");
                 output.delete();
+
+                if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
+                    if (output.lastChar() == ' ') {
+                        clearAllScreen();
+                    } else {
+                        lexicon.deletePos();
+                        wordList = lexicon.getGaussWordList();
+                        drawSelect();
+                    }
+                } else {
+                    clearAllScreen();
+                }
+            } else {
+                clearAllScreen();
             }
-            page = 0;
-            lexicon.clearPos();
-            wordList.Clear();
-            drawSelect();
         } else if (hoverKey != null && hoverKey.tag == "select") {
             if (hoverKey.GetComponentInChildren<Text>().text != "") {
                 string word = hoverKey.GetComponentInChildren<Text>().text;
                 Server.log("select " + word);
-                if (Server.getMethod() == Server.Method.normal) {
+                if (Server.getMethod() != Server.Method.headOnly) {
+                    if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
+                        output.addChar(' ');
+                    }
                     output.delete();
                 }
                 output.addWord(word);
@@ -194,6 +216,19 @@ public class Keyboard : MonoBehaviour {
                     output.checkPhraseStart();
                     Server.log("letter " + ch);
                     output.addChar(ch);
+
+                    if (ch == ' ') {
+                        lexicon.clearPos();
+                        page = 0;
+                        wordList.Clear();
+                        drawSelect();
+                    } else if (char.IsLetter(ch)) {
+                        Vector2 pos;
+                        mainCamera.GetComponent<MainControl>().aimPos(out pos);
+                        lexicon.addPos(pos);
+                        wordList = lexicon.getGaussWordList();
+                        drawSelect();
+                    }
                 }
             } else {
                 wordList = lexicon.getWordList();
@@ -206,8 +241,9 @@ public class Keyboard : MonoBehaviour {
                         drawDefaultWord();
                     }
                 }
+
+                lexicon.clearPos();
             }
-            lexicon.clearPos();
         }
     }
 

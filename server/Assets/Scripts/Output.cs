@@ -93,6 +93,13 @@ public class Output : MonoBehaviour {
         }
     }
 
+    public char lastChar() {
+        if (inputText.Length == 0) {
+            return ' ';
+        }
+        return inputText[inputText.Length - 1];
+    }
+
     public void delete() {
         if (inputText.Length - 1 >= 0 && inputText[inputText.Length - 1] == ' ') {
             //delete a word

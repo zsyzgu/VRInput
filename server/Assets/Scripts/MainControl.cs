@@ -28,7 +28,7 @@ public class MainControl : MonoBehaviour {
         rotateHead();
     }
 
-   bool aimPos(out Vector2 ret) {
+   public bool aimPos(out Vector2 ret) {
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo)) {
@@ -125,12 +125,9 @@ public class MainControl : MonoBehaviour {
 
         if (frameCnt-- == 0) {
             frameCnt = FRAME_PER_SAMPLE;
-            
-            if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
-                tracking.GetComponent<Tracking>().keepDrawing();
-                keyboard.GetComponent<Lexicon>().addPos(new Vector2(pos.x, pos.y));
-            } else {
-                tracking.GetComponent<Tracking>().keepDrawing();
+
+            tracking.GetComponent<Tracking>().keepDrawing();
+            if (Server.getMethod() == Server.Method.normal || Server.getMethod() == Server.Method.headOnly) {
                 tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
                 keyboard.GetComponent<Lexicon>().addPos(new Vector2(pos.x, pos.y));
             }
