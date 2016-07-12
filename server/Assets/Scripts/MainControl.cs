@@ -76,8 +76,7 @@ public class MainControl : MonoBehaviour {
         if (Server.getMethod() == Server.Method.headOnly) {
             if (drawing && board.cursorInsideKeyboard()) {
                 headWriting();
-            }
-            else {
+            } else {
                 //GESTURE END
                 drawing = false;
                 moveCursor();
@@ -129,11 +128,11 @@ public class MainControl : MonoBehaviour {
             
             if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
                 tracking.GetComponent<Tracking>().keepDrawing();
-                keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
+                keyboard.GetComponent<Lexicon>().addPos(new Vector2(pos.x, pos.y));
             } else {
                 tracking.GetComponent<Tracking>().keepDrawing();
                 tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
-                keyboard.GetComponent<Dictionary>().addPos(new Vector2(pos.x, pos.y));
+                keyboard.GetComponent<Lexicon>().addPos(new Vector2(pos.x, pos.y));
             }
         }
     }

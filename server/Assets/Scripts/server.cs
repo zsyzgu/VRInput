@@ -5,20 +5,22 @@ using System.Net;
 using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
+    static public int PHRASE_PER_BLOCK = 2;
+    static public int BLOCK_PER_SESSION = 4;
+    static public int phraseIndex = -1;
+    static public int blockIndex = -1;
     static private Server server;
 
     public Canvas canvas;
     public Text infoText;
     public GameObject output;
     public GameObject infoPanel;
-    public GameObject lineGraph;
     private int port = 1234;
-
-    private int phrasePerBlock = 0;
-    private float[] keyboardSize;
-    private float[] cursorSpeed;
-    private int keyboardSizeIndex = 0;
-    private int cursorSpeedIndex = 0;
+    
+    private float[] keyboardSize = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
+    private float[] cursorSpeed = {0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f};
+    private int keyboardSizeIndex = 3;
+    private int cursorSpeedIndex = 2;
 
     public enum Method {
         normal = 0,
@@ -28,13 +30,14 @@ public class Server : MonoBehaviour {
     };
     private Method method;
     private bool inSession = false;
+    private bool inputing = false;
 
     void Start() {
         server = this;
-        loadSetting();
+        //loadSetting();
     }
 
-    void loadSetting() {
+    /*void loadSetting() {
         TextAsset textAsset = Resources.Load("setting") as TextAsset;
 
         string[] methods = textAsset.text.Split('\n');
@@ -58,7 +61,7 @@ public class Server : MonoBehaviour {
                 }
             }
         }
-    }
+    }*/
 
     void Update() {
         switch (Network.peerType) {
@@ -128,13 +131,10 @@ public class Server : MonoBehaviour {
     }
 
     static public void log(string message) {
-        if (Server.isInSession()) {
+        if (Server.isInputing()) {
             server.sendMessage(Time.time + " " + message);
+            Debug.Log(Time.time + " " + message);
         }
-    }
-
-    static public int getPhrasePerBlock() {
-        return server.phrasePerBlock;
     }
 
     static public void setMethod(Method method) {
@@ -205,20 +205,43 @@ public class Server : MonoBehaviour {
         return server.inSession;
     }
 
-    static public void startSession() {
-        server.inSession = true;
-        server.infoPanel.SetActive(false);
-        server.lineGraph.SetActive(false);
+    static public void play() {
+        if (isInputing()) {
+            server.inputing = false;
+            Output.updateResult();
+        } else {
+            if (isInSession() == false) {
+                server.startSession();
+            }
+        }
+    }
 
-        string sessionInfo = server.method.ToString() + "_" + getSize() + "_" + getSpeed();
-        log("session " + sessionInfo);
+    static public void accept() {
+        server.inputing = true;
         server.output.GetComponent<Output>().updatePhrase();
+    }
+
+    static public void repeat() {
+        server.inputing = true;
+        server.output.GetComponent<Output>().clear();
+    }
+
+    private void startSession() {
+        inSession = true;
+        inputing = true;
+
+        string sessionInfo = method.ToString() + "_" + getSize() + "_" + getSpeed();
+        log("session " + sessionInfo);
+        output.GetComponent<Output>().updatePhrase();
     }
 
     static public void endSession() {
         server.inSession = false;
-        server.infoPanel.SetActive(true);
-        server.lineGraph.SetActive(true);
+        server.inputing = false;
+    }
+
+    static public bool isInputing() {
+        return server.inputing;
     }
 
     void sendMessage(string message) {

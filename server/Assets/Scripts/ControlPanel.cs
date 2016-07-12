@@ -3,6 +3,9 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class ControlPanel : MonoBehaviour {
+    public Texture playImage;
+    public Texture stopImage;
+    public GameObject playKey;
     public RectTransform cursor;
     private RectTransform hoverKey = null;
     
@@ -37,7 +40,7 @@ public class ControlPanel : MonoBehaviour {
             }
             else {
                 switch (key.name) {
-                    case "normal":
+                    /*case "normal":
                         setKeyColor(key, Server.getMethod() == Server.Method.normal ? Color.white : Color.gray);
                         break;
                     case "baseline":
@@ -60,15 +63,59 @@ public class ControlPanel : MonoBehaviour {
                         break;
                     case "speedDown":
                         setKeyColor(key, Server.canSpeedDown() ? Color.white : Color.gray);
-                        break;
+                        break;*/
                     case "play":
-                        setKeyColor(key, !Server.isInSession() ? Color.white : Color.gray);
+                        if (canPlay()) {
+                            if (Server.isInputing()) {
+                                setKeyColor(key, Color.white);
+                            }
+                            else {
+                                setKeyColor(key, Color.green);
+                            }
+                        } else {
+                            setKeyColor(key, Color.gray);
+                        }
+                        if (Server.isInputing()) {
+                            playKey.GetComponent<RawImage>().texture = stopImage;
+                        } else {
+                            playKey.GetComponent<RawImage>().texture = playImage;
+                        }
+                        break;
+                    case "accept":
+                        if (acceptable()) {
+                            setKeyColor(key, Color.green);
+                        } else {
+                            setKeyColor(key, Color.gray);
+                        }
+                        break;
+                    case "repeat":
+                        if (repeatable()) {
+                            if (Server.isInputing()) {
+                                setKeyColor(key, Color.white);
+                            } else {
+                                setKeyColor(key, Color.red);
+                            }
+                        } else {
+                            setKeyColor(key, Color.gray);
+                        }
                         break;
                     default:
                         break;
                 }
             }
         }
+    }
+
+    bool canPlay() {
+        return !Server.isInSession() || Server.isInputing();
+    }
+
+    bool acceptable() {
+        return Server.isInSession() && !Server.isInputing();
+    }
+
+    bool repeatable() {
+        return Server.isInSession();
     }
 
     void setKeyColor(RectTransform key, Color color) {
@@ -90,7 +137,7 @@ public class ControlPanel : MonoBehaviour {
 
         if (hoverKey != null) {
             switch (hoverKey.name) {
-                case "normal":
+                /*case "normal":
                     Server.setMethod(Server.Method.normal);
                     break;
                 case "baseline":
@@ -113,9 +160,21 @@ public class ControlPanel : MonoBehaviour {
                     break;
                 case "speedDown":
                     Server.speedDown();
-                    break;
+                    break;*/
                 case "play":
-                    Server.startSession();
+                    if (canPlay()) {
+                        Server.play();
+                    }
+                    break;
+                case "accept":
+                    if (acceptable()) {
+                        Server.accept();
+                    }
+                    break;
+                case "repeat":
+                    if (repeatable()) {
+                        Server.repeat();
+                    }
                     break;
                 default:
                     break;

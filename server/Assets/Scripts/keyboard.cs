@@ -148,16 +148,16 @@ public class Keyboard : MonoBehaviour {
     }
 
     public void confirm() {
-        Dictionary dictionary = GetComponent<Dictionary>();
+        Lexicon lexicon = GetComponent<Lexicon>();
         updateHover();
 
         if (hoverKey != null && hoverKey.tag == "delete") {
-            Server.log("delete");
             if (Server.getMethod() != Server.Method.headOnly || wordList.Count == 0) {
+                Server.log("delete");
                 output.delete();
             }
             page = 0;
-            dictionary.clearPos();
+            lexicon.clearPos();
             wordList.Clear();
             drawSelect();
         } else if (hoverKey != null && hoverKey.tag == "select") {
@@ -172,7 +172,7 @@ public class Keyboard : MonoBehaviour {
                 wordList.Clear();
                 drawSelect();
             }
-            dictionary.clearPos();
+            lexicon.clearPos();
         } else if (hoverKey != null && hoverKey.tag == "page") {
             if (hoverKey.name == "lastPage" && canLastPage()) {
                 Server.log("lastPage");
@@ -196,18 +196,18 @@ public class Keyboard : MonoBehaviour {
                     output.addChar(ch);
                 }
             } else {
-                wordList = dictionary.getWordList();
+                wordList = lexicon.getWordList();
 
                 drawSelect();
                 if (Server.getMethod() == Server.Method.normal) {
                     //when tap is not on, user must select
                     if (wordList.Count > 0) {
-                        Server.log("gestureEnd " + ((Dictionary.Word)wordList[0]).word);
+                        Server.log("gestureEnd " + ((Lexicon.Word)wordList[0]).word);
                         drawDefaultWord();
                     }
                 }
             }
-            dictionary.clearPos();
+            lexicon.clearPos();
         }
     }
 
@@ -227,7 +227,7 @@ public class Keyboard : MonoBehaviour {
 
                 rank += page * selectNum;
                 if (rank < wordList.Count) {
-                    key.GetComponentInChildren<Text>().text = ((Dictionary.Word)wordList[rank]).word;
+                    key.GetComponentInChildren<Text>().text = ((Lexicon.Word)wordList[rank]).word;
                 } else {
                     key.GetComponentInChildren<Text>().text = "";
                 }
@@ -237,7 +237,7 @@ public class Keyboard : MonoBehaviour {
 
     void drawDefaultWord() {
         if (wordList.Count > 0) {
-            output.addWord(((Dictionary.Word)wordList[0]).word);
+            output.addWord(((Lexicon.Word)wordList[0]).word);
             page = 0;
         }
     }

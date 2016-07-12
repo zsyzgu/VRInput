@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 
-public class Dictionary : MonoBehaviour {
+public class Lexicon : MonoBehaviour {
     public Output output;
 
     public const int MAX_WORD = 5000;
-    public const int METRIC_SAMPLE = 16;
+    public const int METRIC_SAMPLE = 50;
     public const float DIST_THRESHOLD = 0.2f;
 
     public class Word {
@@ -15,6 +16,7 @@ public class Dictionary : MonoBehaviour {
     }
     ArrayList lexicon = new ArrayList();
     ArrayList posList = new ArrayList();
+    static Dictionary<string, float> dict = new Dictionary<string, float>();
 
     private float endPosY = 0;
 
@@ -26,7 +28,11 @@ public class Dictionary : MonoBehaviour {
             if (((Word)x).pri > ((Word)y).pri) {
                 return 1;
             }
-            return 0;
+            if (Lexicon.getWordPri(((Word)x).word) > Lexicon.getWordPri(((Word)y).word)) {
+                return -1;
+            } else {
+                return 1;
+            }
         }
     }
 
@@ -47,6 +53,7 @@ public class Dictionary : MonoBehaviour {
             word.word = line.Split(' ')[0];
             word.pri = float.Parse(line.Split(' ')[1]);
             lexicon.Add(word);
+            dict[word.word] = word.pri;
             if (++cnt >= MAX_WORD) {
                 break;
             }
@@ -69,6 +76,10 @@ public class Dictionary : MonoBehaviour {
         float x = key.localPosition.x / canvas.rect.width + 0.5f;
         float y = key.localPosition.y / canvas.rect.height + 0.5f;
         return new Vector2(x, y);
+    }
+
+    static public float getWordPri(string word) {
+        return dict[word];
     }
 
     public ArrayList getWordList() {
@@ -141,6 +152,7 @@ public class Dictionary : MonoBehaviour {
                 Server.log("gestureStart");
             }
         }
+        Server.log("pos " + pos.x + " " + pos.y);
         posList.Add(pos);
     }
 
