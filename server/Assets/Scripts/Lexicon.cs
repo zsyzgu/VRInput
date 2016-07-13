@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Lexicon : MonoBehaviour {
-    static private float SIGMA_X = 0.073f;
+    static private float SIGMA_X = 0.075f;
     static private float SIGMA_Y = 0.038f;
     public Output output;
 
