@@ -216,6 +216,11 @@ public class Keyboard : MonoBehaviour {
                     output.checkPhraseStart();
                     Server.log("letter " + ch);
                     output.addChar(ch);
+                    /*char letter = output.getRespectiveLetter();
+                    if (char.IsLetter(letter)) {
+                        Vector2 letterPos = lexicon.calnLetterPos(letter);
+                        Server.log("letterPos " + letterPos.x + " " + letterPos.y);
+                    }*/
 
                     if (ch == ' ') {
                         lexicon.clearPos();

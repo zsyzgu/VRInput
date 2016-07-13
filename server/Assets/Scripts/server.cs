@@ -6,7 +6,7 @@ using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
     static public int PHRASE_PER_BLOCK = 8;
-    static public int BLOCK_PER_SESSION = 4;
+    static public int BLOCK_PER_SESSION = 3;
     static public int phraseIndex = -1;
     static public int blockIndex = -1;
     static private Server server;
@@ -20,7 +20,7 @@ public class Server : MonoBehaviour {
     
     private float[] keyboardSize = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
     private float[] cursorSpeed = {0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f};
-    private int keyboardSizeIndex = 3;
+    private int keyboardSizeIndex = 1;
     private int cursorSpeedIndex = 2;
 
     public enum Method {

@@ -4,7 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Lexicon : MonoBehaviour {
-    static private float SIGMA = 0.1f;
+    static private float SIGMA_X = 0.073f;
+    static private float SIGMA_Y = 0.038f;
     public Output output;
 
     public const int MAX_WORD = 5000;
@@ -71,7 +72,7 @@ public class Lexicon : MonoBehaviour {
         
 	}
 
-    Vector2 calnLetterPos(char ch) {
+    public Vector2 calnLetterPos(char ch) {
         RectTransform key = transform.FindChild("key" + char.ToUpper(ch)).GetComponent<RectTransform>();
         RectTransform canvas = transform.parent.GetComponent<RectTransform>();
         float x = key.localPosition.x / canvas.rect.width + 0.5f;
@@ -96,8 +97,12 @@ public class Lexicon : MonoBehaviour {
             float sum = 0f;
             ArrayList wordPosList = new ArrayList();
             for (int j = 0; j < str.Length; j++) {
-                float x = Vector2.Distance(calnLetterPos(str[j]), (Vector2)posList[j]);
-                sum = sum - x * x / (2 * SIGMA * SIGMA);
+                //float x = Vector2.Distance(calnLetterPos(str[j]), (Vector2)posList[j]);
+                Vector2 posA = calnLetterPos(str[j]);
+                Vector2 posB = (Vector2)posList[j];
+                float dx = Mathf.Abs(posA.x - posB.x);
+                float dy = Mathf.Abs(posA.y - posB.y);
+                sum = sum - 0.5f * (dx * dx / (SIGMA_X * SIGMA_X) + dy * dy / (SIGMA_Y * SIGMA_Y));
             }
 
             Word word = new Word();

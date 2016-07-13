@@ -18,6 +18,7 @@ public class Output : MonoBehaviour {
     private string[] phrases = {};
     private bool[] phraseUsed = {};
     private float phraseStartTime;
+    private float phraseEndTime;
 
     void Start () {
         output = this;
@@ -93,6 +94,13 @@ public class Output : MonoBehaviour {
         }
     }
 
+    public char getRespectiveLetter() {
+        if (inputText.Length < phrasesText.Length) {
+            return phrasesText[inputText.Length - 1];
+        }
+        return ' ';
+    }
+
     public char lastChar() {
         if (inputText.Length == 0) {
             return ' ';
@@ -123,6 +131,7 @@ public class Output : MonoBehaviour {
             }
         }
 
+        phraseEndTime = Time.time;
         GetComponent<AudioSource>().PlayOneShot(wordSound);
     }
 
@@ -136,6 +145,7 @@ public class Output : MonoBehaviour {
     public void addWord(string str) {
         inputText += str + " ";
         GetComponent<AudioSource>().PlayOneShot(wordSound);
+        phraseEndTime = Time.time;
         /*if (inputText.Substring(0, inputText.Length - 1) == phrasesText) {
             updatePhrase();
         }*/
@@ -144,6 +154,7 @@ public class Output : MonoBehaviour {
     public void addChar(char ch) {
         inputText += ch;
         GetComponent<AudioSource>().PlayOneShot(wordSound);
+        phraseEndTime = Time.time;
         /*if (inputText == phrasesText) {
             updatePhrase();
         }*/
@@ -216,7 +227,7 @@ public class Output : MonoBehaviour {
                 letterCnt++;
             }
         }
-        float deltaTime = Time.time - output.phraseStartTime;
+        float deltaTime = output.phraseEndTime - output.phraseStartTime;
         float rate = (float)letterCnt / deltaTime * 60 / 5;
         float error = output.calnError();
         InfoPanel.setRate(rate);
