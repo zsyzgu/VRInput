@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class Keyboard : MonoBehaviour {
     private const float DWELL_TIME = 0.4f;
+    private const float EXTRA_DWELL_TIME = 0.4f;
     private const float DWELL_MOVE_SPEED = 5f;
     public Sprite cursorImage;
     public Sprite waitingCircleImage;
@@ -75,19 +76,19 @@ public class Keyboard : MonoBehaviour {
     }
 
     void updateDwell() {
-        if (Vector2.Distance(lastCursorPos, cursor.localPosition) / Time.deltaTime > DWELL_MOVE_SPEED) {
-            dwellTimestamp = Time.time;
-        }
-        lastCursorPos = cursor.localPosition;
-
         if (Server.getMethod() == Server.Method.dwell) {
+            if (Vector2.Distance(lastCursorPos, cursor.localPosition) / Time.deltaTime > DWELL_MOVE_SPEED) {
+                dwellTimestamp = Time.time;
+            }
+            lastCursorPos = cursor.localPosition;
+
             dwellTimeout = false;
             float deltaTime = Time.time - dwellTimestamp;
             if (deltaTime >= DWELL_TIME / 8) {
                 cursor.GetComponent<Image>().sprite = waitingCircleImage;
                 cursor.GetComponent<Image>().fillAmount = deltaTime / DWELL_TIME;
                 if (deltaTime >= DWELL_TIME) {
-                    dwellTimestamp = Time.time;
+                    dwellTimestamp = Time.time + EXTRA_DWELL_TIME;
                     dwellTimeout = true;
                     confirm();
                 }
@@ -161,20 +162,16 @@ public class Keyboard : MonoBehaviour {
         updateHover();
 
         if (hoverKey != null && hoverKey.tag == "delete") {
-            if (Server.getMethod() != Server.Method.headOnly || wordList.Count == 0) {
-                Server.log("delete");
-                output.delete();
+            Server.log("delete");
+            output.delete();
 
-                if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
-                    if (output.lastChar() == ' ') {
-                        clearAllScreen();
-                    } else {
-                        lexicon.deletePos();
-                        wordList = lexicon.getGaussWordList();
-                        drawSelect();
-                    }
-                } else {
+            if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
+                if (output.lastChar() == ' ') {
                     clearAllScreen();
+                } else {
+                    lexicon.deletePos();
+                    wordList = lexicon.getGaussWordList();
+                    drawSelect();
                 }
             } else {
                 clearAllScreen();
@@ -183,12 +180,10 @@ public class Keyboard : MonoBehaviour {
             if (hoverKey.GetComponentInChildren<Text>().text != "") {
                 string word = hoverKey.GetComponentInChildren<Text>().text;
                 Server.log("select " + word);
-                if (Server.getMethod() != Server.Method.headOnly) {
-                    if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
-                        output.addChar(' ');
-                    }
-                    output.delete();
+                if (Server.getMethod() == Server.Method.baseline || Server.getMethod() == Server.Method.dwell) {
+                    output.addChar(' ');
                 }
+                output.delete();
                 output.addWord(word);
                 page = 0;
                 wordList.Clear();

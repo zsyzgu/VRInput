@@ -8,7 +8,7 @@ public class Lexicon : MonoBehaviour {
     static private float SIGMA_Y = 0.038f;
     public Output output;
 
-    public const int MAX_WORD = 5000;
+    public const int MAX_WORD = 10000;
     public const int METRIC_SAMPLE = 50;
     public const float DIST_THRESHOLD = 0.2f;
 
@@ -18,9 +18,8 @@ public class Lexicon : MonoBehaviour {
     }
     ArrayList lexicon = new ArrayList();
     ArrayList posList = new ArrayList();
+    ArrayList wordPosList = new ArrayList();
     static Dictionary<string, float> dict = new Dictionary<string, float>();
-
-    private float endPosY = 0;
 
     public class WordComparer : IComparer {
         public int Compare(object x, object y) {
@@ -40,7 +39,6 @@ public class Lexicon : MonoBehaviour {
 
 	void Start () {
         inputLexicon();
-        calnEndPosY();
 	}
 
     void inputLexicon() {
@@ -56,18 +54,17 @@ public class Lexicon : MonoBehaviour {
             word.pri = float.Parse(line.Split(' ')[1]);
             lexicon.Add(word);
             dict[word.word] = word.pri;
+            ArrayList pos = new ArrayList();
+            for (int i = 0; i < word.word.Length; i++) {
+                pos.Add(calnLetterPos(word.word[i]));
+            }
+            wordPosList.Add(samplePos(pos));
             if (++cnt >= MAX_WORD) {
                 break;
             }
         }
     }
 
-    void calnEndPosY() {
-        float keyTY = calnLetterPos('t').y;
-        float keyGY = calnLetterPos('g').y;
-        endPosY = keyGY + (keyTY - keyGY) * 2.5f;
-    }
-    
 	void Update () {
         
 	}
@@ -95,7 +92,6 @@ public class Lexicon : MonoBehaviour {
             }
 
             float sum = 0f;
-            ArrayList wordPosList = new ArrayList();
             for (int j = 0; j < str.Length; j++) {
                 //float x = Vector2.Distance(calnLetterPos(str[j]), (Vector2)posList[j]);
                 Vector2 posA = calnLetterPos(str[j]);
@@ -131,15 +127,10 @@ public class Lexicon : MonoBehaviour {
         ArrayList posSample = samplePos(posList);
 
         for (int i = 0; i < lexicon.Count; i++) {
-            ArrayList wordPosList = new ArrayList();
             string str = ((Word)lexicon[i]).word;
 
             Vector2 beginPos = calnLetterPos(str[0]);
             Vector2 endPos = calnLetterPos(str[str.Length - 1]);
-            if (Server.getMethod() == Server.Method.headOnly) {
-                beginPos = calnLetterPos('g');
-                endPos.y = endPosY;
-            }
 
             if (Vector2.Distance((Vector2)posList[0], beginPos) > DIST_THRESHOLD) {
                 continue;
@@ -148,24 +139,9 @@ public class Lexicon : MonoBehaviour {
                 continue;
             }
 
-            if (Server.getMethod() == Server.Method.headOnly) {
-                wordPosList.Add(beginPos);
-
-                for (int j = 0; j < str.Length; j++) {
-                    wordPosList.Add(calnLetterPos(str[j]));
-                }
-
-                wordPosList.Add(endPos);
-            } else {
-                for (int j = 0; j < str.Length; j++) {
-                    wordPosList.Add(calnLetterPos(str[j]));
-                }
-            }
-
             Word word = new Word();
             word.word = str;
-            ArrayList wordPosSample = samplePos(wordPosList);
-            word.pri = calnPri(posSample, wordPosSample);
+            word.pri = calnPri(posSample, (ArrayList)wordPosList[i]);
             if (word.pri >= 0) {
                 wordList.Add(word);
             }
@@ -188,7 +164,7 @@ public class Lexicon : MonoBehaviour {
     public void addPos(Vector2 pos) {
         if (posList.Count == 0) {
             output.GetComponent<Output>().checkPhraseStart();
-            if (Server.getMethod() == Server.Method.normal || Server.getMethod() == Server.Method.headOnly) {
+            if (Server.getMethod() == Server.Method.normal) {
                 Server.log("gestureStart");
             }
         }

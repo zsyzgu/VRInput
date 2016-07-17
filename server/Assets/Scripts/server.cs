@@ -5,8 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
-    static public int PHRASE_PER_BLOCK = 4;
-    static public int BLOCK_PER_SESSION = 6;
+    static public int PHRASE_PER_BLOCK = 6;
+    static public int BLOCK_PER_SESSION = 8;
     static public int phraseIndex = -1;
     static public int blockIndex = -1;
     static private Server server;
@@ -26,8 +26,7 @@ public class Server : MonoBehaviour {
     public enum Method {
         normal = 0,
         baseline = 1,
-        headOnly = 2,
-        dwell = 3
+        dwell = 2
     };
     private Method method;
     private bool inSession = false;
@@ -262,10 +261,10 @@ public class Server : MonoBehaviour {
             setMethod(Method.baseline);
         }
         if (message == "3") {
-            setMethod(Method.headOnly);
+            setMethod(Method.dwell);
         }
         if (message == "4") {
-            setMethod(Method.dwell);
+            //setMethod(Method.headOnly);
         }
         if (message == "5") {
             zoomIn();
