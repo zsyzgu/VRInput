@@ -137,6 +137,7 @@ public class Output : MonoBehaviour {
 
     public void clear() {
         while (inputText != "") {
+            Server.log("delete");
             delete();
         }
         GetComponent<AudioSource>().PlayOneShot(wordSound);

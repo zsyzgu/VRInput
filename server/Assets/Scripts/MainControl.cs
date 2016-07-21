@@ -69,13 +69,22 @@ public class MainControl : MonoBehaviour {
     void mainControl() {
         Keyboard board = keyboard.GetComponent<Keyboard>();
 
-        if (Input.GetButton("Fire1")) {
-            headWriting();
-        } else {
+        if (Server.getMethod() == Server.Method.normal) {
+            if (Input.GetButton("Fire1")) {
+                headWriting();
+            } else {
+                moveCursor();
+                if (tracking.GetComponent<Tracking>().stopDrawing()) {
+                    board.confirm();
+                }
+            }
+        } else if (Server.getMethod() == Server.Method.baseline) {
             moveCursor();
-            if (tracking.GetComponent<Tracking>().stopDrawing()) {
+            if (Input.GetButtonDown("Fire1")) {
                 board.confirm();
             }
+        } else if (Server.getMethod() == Server.Method.dwell) {
+            moveCursor();
         }
     }
     

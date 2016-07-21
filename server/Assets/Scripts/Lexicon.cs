@@ -10,7 +10,7 @@ public class Lexicon : MonoBehaviour {
 
     public const int MAX_WORD = 10000;
     public const int METRIC_SAMPLE = 50;
-    public const float DIST_THRESHOLD = 0.2f;
+    public const float DIST_THRESHOLD = 0.1f;
     public const float KEY_RADIUS = 0.05f;
 
     public class Word {
@@ -219,14 +219,13 @@ public class Lexicon : MonoBehaviour {
         
         for (int k = 0; k < METRIC_SAMPLE; k++) {
             float dist = Vector2.Distance((Vector2)A[k], (Vector2)B[k]);
-            if (dist > DIST_THRESHOLD) {
+            /*if (dist > DIST_THRESHOLD) {
                 return -1;
-            }
-            dist = Mathf.Max(dist - KEY_RADIUS, 0f);
-            ret += dist;
+            }*/
+            //dist = Mathf.Max(dist - KEY_RADIUS, 0f);
+            ret = ret + dist;
         }
-
-        ret /= METRIC_SAMPLE;
+        
         return ret;
     }
 }

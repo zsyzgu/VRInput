@@ -5,8 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
-    static public int PHRASE_PER_BLOCK = 6;
-    static public int BLOCK_PER_SESSION = 8;
+    static public int PHRASE_PER_BLOCK = 8;
+    static public int BLOCK_PER_SESSION = 6;
     static public int phraseIndex = -1;
     static public int blockIndex = -1;
     static private Server server;
@@ -133,6 +133,7 @@ public class Server : MonoBehaviour {
     static public void log(string message) {
         if (Server.isInputing()) {
             server.sendMessage(Time.time + " " + message);
+            Debug.Log(message);
         }
     }
 
