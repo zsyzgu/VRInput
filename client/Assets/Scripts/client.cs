@@ -117,7 +117,7 @@ public class Client : MonoBehaviour {
         if (message.Split(' ')[1] == "session") {
             sessionInfo = message.Split(' ')[2];
         }
-        sw = new StreamWriter(userName + "_" + sessionInfo + ".txt", true);
+        sw = new StreamWriter(userName + "_normal.txt", true);
         sw.WriteLine(message);
         sw.Close();
         messageList.Add(message);

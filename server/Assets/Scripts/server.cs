@@ -134,7 +134,6 @@ public class Server : MonoBehaviour {
     static public void log(string message) {
         if (Server.isInputing()) {
             server.sendMessage(Time.time + " " + message);
-            Debug.Log(message);
         }
     }
 
@@ -243,6 +242,7 @@ public class Server : MonoBehaviour {
     static public void accept() {
         server.inputing = true;
         server.output.GetComponent<Output>().updatePhrase();
+        server.output.GetComponent<Output>().logPhrase();
     }
 
     static public void repeat() {
@@ -255,9 +255,10 @@ public class Server : MonoBehaviour {
         inputing = true;
         server.warning.GetComponent<Text>().text = "";
 
+        output.GetComponent<Output>().updatePhrase();
         string sessionInfo = method.ToString() + "_" + getSize() + "_" + getSpeed();
         log("session " + sessionInfo);
-        output.GetComponent<Output>().updatePhrase();
+        output.GetComponent<Output>().logPhrase();
     }
 
     static public void endSession() {

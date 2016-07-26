@@ -40,6 +40,7 @@ public class Output : MonoBehaviour {
 	void Update () {
 	    if (phrasesText == "") {
             updatePhrase();
+            logPhrase();
         }
         updateOutput();
 	}
@@ -188,6 +189,9 @@ public class Output : MonoBehaviour {
         }
 
         inputText = "";
+    }
+
+    public void logPhrase() {
         Server.log("phrase " + phrasesText);
     }
 
