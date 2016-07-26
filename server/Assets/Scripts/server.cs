@@ -6,7 +6,7 @@ using System.Net.Sockets;
 
 public class Server : MonoBehaviour {
     static public int PHRASE_PER_BLOCK = 8;
-    static public int BLOCK_PER_SESSION = 6;
+    static public int BLOCK_PER_SESSION = 9;
     static public int phraseIndex = -1;
     static public int blockIndex = -1;
     static private Server server;
@@ -18,10 +18,11 @@ public class Server : MonoBehaviour {
     public GameObject warning;
     private int port = 1234;
     
-    private float[] keyboardSize = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
-    private float[] cursorSpeed = {0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f};
-    private int keyboardSizeIndex = 1;
-    private int cursorSpeedIndex = 2;
+    private float[] keyboardSize = {0.4f, 0.6f, 0.8f};
+    private float[] cursorSpeed = {1f, 1.5f, 2f};
+    private int keyboardSizeIndex = 0;
+    private int cursorSpeedIndex = 0;
+    private int order = 0;
 
     public enum Method {
         normal = 0,
@@ -145,14 +146,31 @@ public class Server : MonoBehaviour {
         return server.method;
     }
 
-    private void setSize() {
+    private void modifySize() {
         RectTransform rect = canvas.GetComponent<RectTransform>();
         float size = keyboardSize[keyboardSizeIndex];
         rect.localScale = new Vector3(size, size, size);
     }
 
+    static public void setOrder(int v) {
+        server.order = v;
+        setSize(v);
+        setSpeed(v);
+    }
+
+    static public int getOrder() {
+        return server.order;
+    }
+
     static public float getSize() {
         return server.keyboardSize[server.keyboardSizeIndex];
+    }
+
+    static public void setSize(int index) {
+        if (0 <= index && index < server.keyboardSize.Length) {
+            server.keyboardSizeIndex = index;
+            server.modifySize();
+        }
     }
 
     static public bool canZoomIn() {
@@ -162,7 +180,7 @@ public class Server : MonoBehaviour {
     static public void zoomIn() {
         if (canZoomIn()) {
             server.keyboardSizeIndex++;
-            server.setSize();
+            server.modifySize();
         }
     }
 
@@ -173,12 +191,18 @@ public class Server : MonoBehaviour {
     static public void zoomOut() {
         if (canZoomOut()) {
             server.keyboardSizeIndex--;
-            server.setSize();
+            server.modifySize();
         }
     }
 
     static public float getSpeed() {
         return server.cursorSpeed[server.cursorSpeedIndex];
+    }
+
+    static public void setSpeed(int index) {
+        if (0 <= index && index < server.cursorSpeed.Length) {
+            server.cursorSpeedIndex = index;
+        }
     }
 
     static public bool canSpeedUp() {
@@ -255,7 +279,7 @@ public class Server : MonoBehaviour {
     }
 
     void recvMessage(string message) {
-        if (message == "1") {
+        /*if (message == "1") {
             setMethod(Method.normal);
         }
         if (message == "2") {
@@ -278,6 +302,15 @@ public class Server : MonoBehaviour {
         }
         if (message == "8") {
             speedDown();
+        }*/
+        if (message == "1") {
+            setOrder(0);
+        }
+        if (message == "2") {
+            setOrder(1);
+        }
+        if (message == "3") {
+            setOrder(2);
         }
     }
 

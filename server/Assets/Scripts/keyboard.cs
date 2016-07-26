@@ -273,7 +273,8 @@ public class Keyboard : MonoBehaviour {
 
     void drawDefaultWord() {
         if (wordList.Count > 0) {
-            output.addWord(((Lexicon.Word)wordList[0]).word);
+            string word = ((Lexicon.Word)wordList[0]).word;
+            output.addWord(word);
             page = 0;
         }
     }

@@ -19,6 +19,7 @@ public class InfoPanel : MonoBehaviour {
         string info = "";
         info += "IP: " + IP + "\n";
         info += "Technique: " + Server.getMethod().ToString() + "\n";
+        info += "Order: " + Server.getOrder() + "\n";
         info += "Block: " + (Server.blockIndex + 1) + "/" + Server.BLOCK_PER_SESSION + "\n";
         info += "Phrase: " + (Server.phraseIndex + 1) + "/" + Server.PHRASE_PER_BLOCK + "\n";
 
