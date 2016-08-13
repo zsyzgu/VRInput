@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class Lexicon : MonoBehaviour {
     static private float SIGMA_X = 0.075f;
     static private float SIGMA_Y = 0.038f;
+    static private float ST_VALUE = 0.2f;
+    static private float EN_VALUE = 0.2f;
     public Output output;
 
     public const int MAX_WORD = 10000;
@@ -133,10 +135,10 @@ public class Lexicon : MonoBehaviour {
             Vector2 beginPos = calnLetterPos(str[0]);
             Vector2 endPos = calnLetterPos(str[str.Length - 1]);
 
-            if (Vector2.Distance((Vector2)posList[0], beginPos) > DIST_THRESHOLD) {
+            if (calnOvalDist((Vector2)posList[0], beginPos, 0) > DIST_THRESHOLD) {
                 continue;
             }
-            if (Vector2.Distance((Vector2)posList[posList.Count - 1], endPos) > DIST_THRESHOLD) {
+            if (calnOvalDist((Vector2)posList[posList.Count - 1], endPos, 1) > DIST_THRESHOLD) {
                 continue;
             }
 
@@ -217,16 +219,36 @@ public class Lexicon : MonoBehaviour {
     private float calnPri(ArrayList A, ArrayList B) {
         float ret = 0;
         
-        for (int k = 0; k < METRIC_SAMPLE; k++) {
-            float dist = Vector2.Distance((Vector2)A[k], (Vector2)B[k]);
-            /*if (dist > DIST_THRESHOLD) {
-                return -1;
-            }*/
-            //dist = Mathf.Max(dist - KEY_RADIUS, 0f);
+        for (int k = 1; k < METRIC_SAMPLE - 1; k++) {
+            float dist = calnOvalDist((Vector2)A[k], (Vector2)B[k], 2);
             ret = ret + dist;
         }
-        
+        ret = ret / (METRIC_SAMPLE - 2);
+        ret = ret * (1 - ST_VALUE - EN_VALUE);
+        ret = ret + ST_VALUE * calnOvalDist((Vector2)A[0], (Vector2)B[0], 0);
+        ret = ret + EN_VALUE * calnOvalDist((Vector2)A[METRIC_SAMPLE - 1], (Vector2)B[METRIC_SAMPLE - 1], 1);
         return ret;
+    }
+
+    private float calnOvalDist(Vector2 A, Vector2 B, int type) {
+        float X = 0f;
+        float Y = 0f;
+        if (type == 0) {
+            //start
+            X = 0.2723f;
+            Y = 0.1714f;
+        } else if (type == 1) {
+            //end
+            X = 0.3058f;
+            Y = 0.2052f;
+        } else if (type == 2) {
+            //middle
+            X = 0.4027f;
+            Y = 0.2366f;
+        }
+        float a = Mathf.Sqrt(X / Y);
+        float b = Mathf.Sqrt(Y / X);
+        return Mathf.Sqrt((A.x - B.x) * (A.x - B.x) / a / a + (A.y - B.y) * (A.y - B.y) / b / b);
     }
 }
 

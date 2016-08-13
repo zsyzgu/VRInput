@@ -20,7 +20,7 @@ public class Server : MonoBehaviour {
     
     private float[] keyboardSize = {0.4f, 0.6f, 0.8f};
     private float[] cursorSpeed = {1f, 1.5f, 2f};
-    private int keyboardSizeIndex = 0;
+    private int keyboardSizeIndex = 1;
     private int cursorSpeedIndex = 0;
     private int order = 0;
 
@@ -280,7 +280,7 @@ public class Server : MonoBehaviour {
     }
 
     void recvMessage(string message) {
-        /*if (message == "1") {
+        if (message == "1") {
             setMethod(Method.normal);
         }
         if (message == "2") {
@@ -303,8 +303,8 @@ public class Server : MonoBehaviour {
         }
         if (message == "8") {
             speedDown();
-        }*/
-        if (message == "1") {
+        }
+        /*if (message == "1") {
             setOrder(0);
         }
         if (message == "2") {
@@ -312,7 +312,7 @@ public class Server : MonoBehaviour {
         }
         if (message == "3") {
             setOrder(2);
-        }
+        }*/
     }
 
     [RPC]
