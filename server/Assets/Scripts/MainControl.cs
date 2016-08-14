@@ -101,6 +101,7 @@ public class MainControl : MonoBehaviour {
 
             tracking.GetComponent<Tracking>().keepDrawing();
             if (Server.getMethod() == Server.Method.normal) {
+                cursor.GetComponent<HighlightCursor>().clearDefaultWord();
                 tracking.GetComponent<Tracking>().addPos(pos.x, pos.y);
                 keyboard.GetComponent<Lexicon>().addPos(new Vector2(pos.x, pos.y));
             }

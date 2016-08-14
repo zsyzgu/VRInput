@@ -276,6 +276,7 @@ public class Keyboard : MonoBehaviour {
             string word = ((Lexicon.Word)wordList[0]).word;
             output.addWord(word);
             page = 0;
+            cursor.GetComponent<HighlightCursor>().setDefaultWord(word);
         }
     }
 }

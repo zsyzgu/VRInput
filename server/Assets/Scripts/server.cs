@@ -18,10 +18,10 @@ public class Server : MonoBehaviour {
     public GameObject warning;
     private int port = 1234;
     
-    private float[] keyboardSize = {0.4f, 0.6f, 0.8f};
-    private float[] cursorSpeed = {1f, 1.5f, 2f};
-    private int keyboardSizeIndex = 1;
-    private int cursorSpeedIndex = 0;
+    private float[] keyboardSize = {0.4f, 0.6f, 0.8f, 1.0f};
+    private float[] cursorSpeed = {0.5f, 1f, 1.5f, 2f};
+    private int keyboardSizeIndex = 2;
+    private int cursorSpeedIndex = 1;
     private int order = 0;
 
     public enum Method {

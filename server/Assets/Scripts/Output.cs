@@ -176,10 +176,10 @@ public class Output : MonoBehaviour {
             Server.phraseIndex++;
             if (Server.phraseIndex == 0) {
                 Server.blockIndex++;
-                int index = Server.blockIndex;
+                /*int index = Server.blockIndex;
                 int order = Server.getOrder();
                 Server.setSize((index + order) % 3);
-                Server.setSpeed((index / 3 + order) % 3);
+                Server.setSpeed((index / 3 + order) % 3);*/
             }
             if (Server.phraseIndex == Server.PHRASE_PER_BLOCK) {
                 //session end
