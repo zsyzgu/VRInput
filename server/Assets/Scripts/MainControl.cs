@@ -4,7 +4,7 @@ using UnityEngine.VR;
 using UnityEngine.UI;
 
 public class MainControl : MonoBehaviour {
-    const int FRAME_PER_SAMPLE = 5;
+    const int FRAME_PER_SAMPLE = 1;
 
     public GameObject trackingSpace;
     public RectTransform canvas;

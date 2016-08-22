@@ -13,7 +13,6 @@ public class Lexicon : MonoBehaviour {
     public const int MAX_WORD = 10000;
     public const int METRIC_SAMPLE = 50;
     public const float DIST_THRESHOLD = 0.1f;
-    public const float KEY_RADIUS = 0.05f;
 
     public class Word {
         public float pri;

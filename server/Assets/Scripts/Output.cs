@@ -71,13 +71,38 @@ public class Output : MonoBehaviour {
     }
 
     string getPhrase() {
+        if (Server.phraseIndex == -1) {
+            for (int i = 0; i < Server.PHRASE_PER_BLOCK; i++) {
+                phraseUsed[i] = false;
+            }
+        }
+
+        bool check = false;
+        for (int i = 0; i < Server.PHRASE_PER_BLOCK; i++) {
+            if (phraseUsed[i] == false) {
+                check = true;
+            }
+        }
+        if (check == false) {
+            return "";
+        }
+
+        for (int i = random.Next(Server.PHRASE_PER_BLOCK); ; i = random.Next(Server.PHRASE_PER_BLOCK)) {
+            if (phraseUsed[i] == false) {
+                phraseUsed[i] = true;
+                return phrases[i];
+            }
+        }
+    }
+
+    /*string getPhrase() {
         int cnt = 0;
 
         for (int i = random.Next(phrases.Length); ; i = random.Next(phrases.Length)) {
             if (phraseUsed[i]) {
                 continue;
             }
-
+            
             string phrase = phrases[i];
             string[] words = phrase.Split(' ');
 
@@ -93,7 +118,7 @@ public class Output : MonoBehaviour {
                 return phrase;
             }
         }
-    }
+    }*/
 
     public char getRespectiveLetter() {
         if (inputText.Length < phrasesText.Length) {

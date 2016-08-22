@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 
 public class Server : MonoBehaviour {
-    static public int PHRASE_PER_BLOCK = 8;
-    static public int BLOCK_PER_SESSION = 9;
+    static public int PHRASE_PER_BLOCK = 10;
+    static public int BLOCK_PER_SESSION = 8;
     static public int phraseIndex = -1;
     static public int blockIndex = -1;
     static private Server server;
@@ -17,6 +17,7 @@ public class Server : MonoBehaviour {
     public GameObject infoPanel;
     public GameObject warning;
     private int port = 1234;
+    //private string fileName = "";
     
     private float[] keyboardSize = {0.4f, 0.6f, 0.8f, 1.0f};
     private float[] cursorSpeed = {0.5f, 1f, 1.5f, 2f};
@@ -36,6 +37,9 @@ public class Server : MonoBehaviour {
     void Start() {
         server = this;
         //loadSetting();
+        /*var epochStart = new System.DateTime(1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
+        int timestamp = (int)(System.DateTime.UtcNow - epochStart).TotalSeconds;
+        fileName = Application.persistentDataPath + "/user" + timestamp + ".txt";*/
     }
 
     /*void loadSetting() {
@@ -277,6 +281,9 @@ public class Server : MonoBehaviour {
 
     void sendMessage(string message) {
         GetComponent<NetworkView>().RPC("reciveMessage", RPCMode.All, message);
+        /*StreamWriter sw = new StreamWriter(fileName, true);
+        sw.WriteLine(message);
+        sw.Close();*/
     }
 
     void recvMessage(string message) {
