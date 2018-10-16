@@ -72,7 +72,7 @@ public class Lexicon : MonoBehaviour {
 	}
 
     public Vector2 calnLetterPos(char ch) {
-        RectTransform key = transform.FindChild("key" + char.ToUpper(ch)).GetComponent<RectTransform>();
+        RectTransform key = transform.Find("key" + char.ToUpper(ch)).GetComponent<RectTransform>();
         RectTransform canvas = transform.parent.GetComponent<RectTransform>();
         float x = key.localPosition.x / canvas.rect.width + 0.5f;
         float y = key.localPosition.y / canvas.rect.height + 0.5f;
